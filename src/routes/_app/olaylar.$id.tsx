@@ -119,7 +119,7 @@ function IncidentWorkspace() {
       patch["decided_at"] = new Date().toISOString();
     }
     const { error } = await supabase.from(table).update(patch as never).eq("id", rowId);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await supabase.from("audit_logs").insert({
       organization_id: org,
       actor_id: session.user.id,
@@ -146,7 +146,7 @@ function IncidentWorkspace() {
     const patch: Record<string, unknown> = { status: next, updated_at: new Date().toISOString() };
     if (next === "resolved") patch["resolved_at"] = new Date().toISOString();
     const { error } = await supabase.from("incidents").update(patch as never).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await supabase.from("incident_events").insert({
       organization_id: org,
       incident_id: id,
@@ -177,7 +177,7 @@ function IncidentWorkspace() {
         severity_decision_reason: reason || "Manager onayı",
       })
       .eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await supabase.from("incident_events").insert({
       organization_id: org,
       incident_id: id,
@@ -435,7 +435,7 @@ function IncidentWorkspace() {
                           </span>
                         </div>
                         <p className="text-sm text-muted-foreground">{article.summary}</p>
-                        <ConfidenceBar value={l.score} />
+                        <ConfidenceBar value={l.score ?? 0} />
                       </CardContent>
                     </Card>
                   );
