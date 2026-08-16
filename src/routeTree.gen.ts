@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppKomutaRouteImport } from './routes/_app/komuta'
 import { Route as AppOlaylarIndexRouteImport } from './routes/_app/olaylar.index'
+import { Route as AppOlaylarYeniRouteImport } from './routes/_app/olaylar.yeni'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -33,15 +34,22 @@ const AppOlaylarIndexRoute = AppOlaylarIndexRouteImport.update({
   path: '/olaylar/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppOlaylarYeniRoute = AppOlaylarYeniRouteImport.update({
+  id: '/olaylar/yeni',
+  path: '/olaylar/yeni',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/komuta': typeof AppKomutaRoute
+  '/olaylar/yeni': typeof AppOlaylarYeniRoute
   '/olaylar/': typeof AppOlaylarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/komuta': typeof AppKomutaRoute
+  '/olaylar/yeni': typeof AppOlaylarYeniRoute
   '/olaylar': typeof AppOlaylarIndexRoute
 }
 export interface FileRoutesById {
@@ -49,14 +57,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_app/komuta': typeof AppKomutaRoute
+  '/_app/olaylar/yeni': typeof AppOlaylarYeniRoute
   '/_app/olaylar/': typeof AppOlaylarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/komuta' | '/olaylar/'
+  fullPaths: '/' | '/komuta' | '/olaylar/yeni' | '/olaylar/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/komuta' | '/olaylar'
-  id: '__root__' | '/' | '/_app' | '/_app/komuta' | '/_app/olaylar/'
+  to: '/' | '/komuta' | '/olaylar/yeni' | '/olaylar'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_app/komuta'
+    | '/_app/olaylar/yeni'
+    | '/_app/olaylar/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,16 +109,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOlaylarIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/olaylar/yeni': {
+      id: '/_app/olaylar/yeni'
+      path: '/olaylar/yeni'
+      fullPath: '/olaylar/yeni'
+      preLoaderRoute: typeof AppOlaylarYeniRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppKomutaRoute: typeof AppKomutaRoute
+  AppOlaylarYeniRoute: typeof AppOlaylarYeniRoute
   AppOlaylarIndexRoute: typeof AppOlaylarIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppKomutaRoute: AppKomutaRoute,
+  AppOlaylarYeniRoute: AppOlaylarYeniRoute,
   AppOlaylarIndexRoute: AppOlaylarIndexRoute,
 }
 
