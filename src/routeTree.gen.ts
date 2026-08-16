@@ -10,33 +10,141 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppAnalitikRouteImport } from './routes/_app/analitik'
+import { Route as AppBilgiRouteImport } from './routes/_app/bilgi'
+import { Route as AppKomutaRouteImport } from './routes/_app/komuta'
+import { Route as AppProblemlerRouteImport } from './routes/_app/problemler'
+import { Route as AppTriageRouteImport } from './routes/_app/triage'
+import { Route as AppOlaylarIndexRouteImport } from './routes/_app/olaylar.index'
+import { Route as AppOlaylarIdRouteImport } from './routes/_app/olaylar.$id'
+import { Route as AppOlaylarYeniRouteImport } from './routes/_app/olaylar.yeni'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppAnalitikRoute = AppAnalitikRouteImport.update({
+  id: '/analitik',
+  path: '/analitik',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBilgiRoute = AppBilgiRouteImport.update({
+  id: '/bilgi',
+  path: '/bilgi',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppKomutaRoute = AppKomutaRouteImport.update({
+  id: '/komuta',
+  path: '/komuta',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProblemlerRoute = AppProblemlerRouteImport.update({
+  id: '/problemler',
+  path: '/problemler',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTriageRoute = AppTriageRouteImport.update({
+  id: '/triage',
+  path: '/triage',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOlaylarIndexRoute = AppOlaylarIndexRouteImport.update({
+  id: '/olaylar/',
+  path: '/olaylar/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOlaylarIdRoute = AppOlaylarIdRouteImport.update({
+  id: '/olaylar/$id',
+  path: '/olaylar/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOlaylarYeniRoute = AppOlaylarYeniRouteImport.update({
+  id: '/olaylar/yeni',
+  path: '/olaylar/yeni',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analitik': typeof AppAnalitikRoute
+  '/bilgi': typeof AppBilgiRoute
+  '/komuta': typeof AppKomutaRoute
+  '/problemler': typeof AppProblemlerRoute
+  '/triage': typeof AppTriageRoute
+  '/olaylar/$id': typeof AppOlaylarIdRoute
+  '/olaylar/yeni': typeof AppOlaylarYeniRoute
+  '/olaylar/': typeof AppOlaylarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analitik': typeof AppAnalitikRoute
+  '/bilgi': typeof AppBilgiRoute
+  '/komuta': typeof AppKomutaRoute
+  '/problemler': typeof AppProblemlerRoute
+  '/triage': typeof AppTriageRoute
+  '/olaylar/$id': typeof AppOlaylarIdRoute
+  '/olaylar/yeni': typeof AppOlaylarYeniRoute
+  '/olaylar': typeof AppOlaylarIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_app/analitik': typeof AppAnalitikRoute
+  '/_app/bilgi': typeof AppBilgiRoute
+  '/_app/komuta': typeof AppKomutaRoute
+  '/_app/problemler': typeof AppProblemlerRoute
+  '/_app/triage': typeof AppTriageRoute
+  '/_app/olaylar/$id': typeof AppOlaylarIdRoute
+  '/_app/olaylar/yeni': typeof AppOlaylarYeniRoute
+  '/_app/olaylar/': typeof AppOlaylarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/analitik'
+    | '/bilgi'
+    | '/komuta'
+    | '/problemler'
+    | '/triage'
+    | '/olaylar/$id'
+    | '/olaylar/yeni'
+    | '/olaylar/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/analitik'
+    | '/bilgi'
+    | '/komuta'
+    | '/problemler'
+    | '/triage'
+    | '/olaylar/$id'
+    | '/olaylar/yeni'
+    | '/olaylar'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_app/analitik'
+    | '/_app/bilgi'
+    | '/_app/komuta'
+    | '/_app/problemler'
+    | '/_app/triage'
+    | '/_app/olaylar/$id'
+    | '/_app/olaylar/yeni'
+    | '/_app/olaylar/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +156,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/analitik': {
+      id: '/_app/analitik'
+      path: '/analitik'
+      fullPath: '/analitik'
+      preLoaderRoute: typeof AppAnalitikRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/bilgi': {
+      id: '/_app/bilgi'
+      path: '/bilgi'
+      fullPath: '/bilgi'
+      preLoaderRoute: typeof AppBilgiRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/komuta': {
+      id: '/_app/komuta'
+      path: '/komuta'
+      fullPath: '/komuta'
+      preLoaderRoute: typeof AppKomutaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/problemler': {
+      id: '/_app/problemler'
+      path: '/problemler'
+      fullPath: '/problemler'
+      preLoaderRoute: typeof AppProblemlerRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/triage': {
+      id: '/_app/triage'
+      path: '/triage'
+      fullPath: '/triage'
+      preLoaderRoute: typeof AppTriageRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/olaylar/': {
+      id: '/_app/olaylar/'
+      path: '/olaylar'
+      fullPath: '/olaylar/'
+      preLoaderRoute: typeof AppOlaylarIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/olaylar/$id': {
+      id: '/_app/olaylar/$id'
+      path: '/olaylar/$id'
+      fullPath: '/olaylar/$id'
+      preLoaderRoute: typeof AppOlaylarIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/olaylar/yeni': {
+      id: '/_app/olaylar/yeni'
+      path: '/olaylar/yeni'
+      fullPath: '/olaylar/yeni'
+      preLoaderRoute: typeof AppOlaylarYeniRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppAnalitikRoute: typeof AppAnalitikRoute
+  AppBilgiRoute: typeof AppBilgiRoute
+  AppKomutaRoute: typeof AppKomutaRoute
+  AppProblemlerRoute: typeof AppProblemlerRoute
+  AppTriageRoute: typeof AppTriageRoute
+  AppOlaylarIdRoute: typeof AppOlaylarIdRoute
+  AppOlaylarYeniRoute: typeof AppOlaylarYeniRoute
+  AppOlaylarIndexRoute: typeof AppOlaylarIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAnalitikRoute: AppAnalitikRoute,
+  AppBilgiRoute: AppBilgiRoute,
+  AppKomutaRoute: AppKomutaRoute,
+  AppProblemlerRoute: AppProblemlerRoute,
+  AppTriageRoute: AppTriageRoute,
+  AppOlaylarIdRoute: AppOlaylarIdRoute,
+  AppOlaylarYeniRoute: AppOlaylarYeniRoute,
+  AppOlaylarIndexRoute: AppOlaylarIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
