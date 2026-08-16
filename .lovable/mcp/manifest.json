@@ -1,0 +1,270 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://ymywqlofhioagdhszbim.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "pixel-perfect-clone",
+      "version": "0.1.0",
+      "title": "Pixel Perfect Clone"
+    },
+    "tools": [
+      {
+        "name": "list_incidents",
+        "title": "List incidents",
+        "description": "List incidents in the signed-in user's tenant, newest first. Optionally filter by status or severity.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by incident status.",
+              "type": "string",
+              "enum": [
+                "new",
+                "triage_pending",
+                "triaged",
+                "investigating",
+                "mitigated",
+                "resolved",
+                "knowledge_review",
+                "closed",
+                "reopened"
+              ]
+            },
+            "severity": {
+              "description": "Filter by approved severity.",
+              "type": "string",
+              "enum": [
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+              ]
+            },
+            "limit": {
+              "default": 20,
+              "description": "Maximum number of incidents.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "incidents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              }
+            }
+          },
+          "required": [
+            "incidents"
+          ]
+        }
+      },
+      {
+        "name": "get_incident",
+        "title": "Get incident detail",
+        "description": "Fetch one incident with its AI root-cause hypotheses and recommended actions, by incident id or reference (e.g. INC-1042).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "incident": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Incident UUID or human reference code."
+            }
+          },
+          "required": [
+            "incident"
+          ]
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "incident": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            },
+            "hypotheses": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              }
+            },
+            "recommended_actions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              }
+            }
+          },
+          "required": [
+            "incident",
+            "hypotheses",
+            "recommended_actions"
+          ]
+        }
+      },
+      {
+        "name": "search_knowledge",
+        "title": "Search knowledge base",
+        "description": "Search the tenant's incident knowledge articles by keyword across title, summary and body.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Keyword or phrase to search for."
+            },
+            "limit": {
+              "default": 10,
+              "description": "Maximum number of articles.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 25
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "articles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              }
+            }
+          },
+          "required": [
+            "articles"
+          ]
+        }
+      },
+      {
+        "name": "create_incident",
+        "title": "Report incident",
+        "description": "Create a new incident record in the signed-in user's tenant.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 3,
+              "description": "Short incident title."
+            },
+            "description": {
+              "type": "string",
+              "minLength": 10,
+              "description": "What is happening, impact and symptoms."
+            },
+            "environment": {
+              "default": "prod",
+              "description": "Affected environment.",
+              "type": "string",
+              "enum": [
+                "prod",
+                "staging",
+                "test"
+              ]
+            },
+            "reported_severity": {
+              "description": "Severity reported by the human.",
+              "type": "string",
+              "enum": [
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+              ]
+            },
+            "category": {
+              "description": "Optional category, e.g. payment, card, core-banking.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "title",
+            "description"
+          ]
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "incident": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            }
+          },
+          "required": [
+            "incident"
+          ]
+        }
+      }
+    ]
+  }
+}

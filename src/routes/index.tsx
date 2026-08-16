@@ -41,9 +41,24 @@ function Landing() {
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
 
+  // Preserve a same-origin relative return path (used by the OAuth consent flow).
+  function nextPath(): string | null {
+    if (typeof window === "undefined") return null;
+    const raw = new URLSearchParams(window.location.search).get("next");
+    if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return null;
+    return raw;
+  }
+
+  function afterAuth() {
+    const next = nextPath();
+    if (next) window.location.href = next;
+    else navigate({ to: "/komuta" });
+  }
+
   useEffect(() => {
-    if (!loading && session) navigate({ to: "/komuta" });
-  }, [loading, session, navigate]);
+    if (!loading && session) afterAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, session]);
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
@@ -51,7 +66,7 @@ function Landing() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error) toast.error(error.message);
-    else navigate({ to: "/komuta" });
+    else afterAuth();
   }
 
   async function signUp(e: React.FormEvent) {
@@ -61,7 +76,7 @@ function Landing() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/komuta`,
+        emailRedirectTo: `${window.location.origin}${nextPath() ?? "/komuta"}`,
         data: { full_name: fullName },
       },
     });
@@ -71,15 +86,16 @@ function Landing() {
   }
 
   async function google() {
+    const next = nextPath();
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: next ? `${window.location.origin}${next}` : window.location.origin,
     });
     if (result.error) {
       toast.error("Google ile giriş başarısız oldu.");
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/komuta" });
+    afterAuth();
   }
 
   return (
