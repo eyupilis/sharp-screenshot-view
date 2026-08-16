@@ -19,7 +19,7 @@ export type EvidenceItem = {
 export type TriageOutput = {
   mode: "live" | "fallback";
   model: string | null;
-  warning?: string;
+  warning?: string | undefined;
   triage: {
     category: string;
     suggestedSeverity: "P1" | "P2" | "P3" | "P4";
