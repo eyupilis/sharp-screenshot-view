@@ -43,7 +43,7 @@ export default defineTool({
         environment: environment ?? "prod",
         reported_severity: reported_severity ?? null,
         category: category ?? null,
-        created_by: userId,
+        created_by: userId ?? null,
         detected_at: new Date().toISOString(),
       })
       .select("id, reference, title, status, environment, reported_severity")
