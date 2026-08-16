@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppBilgiRouteImport } from './routes/_app/bilgi'
 import { Route as AppKomutaRouteImport } from './routes/_app/komuta'
+import { Route as AppProblemlerRouteImport } from './routes/_app/problemler'
 import { Route as AppTriageRouteImport } from './routes/_app/triage'
 import { Route as AppOlaylarIndexRouteImport } from './routes/_app/olaylar.index'
 import { Route as AppOlaylarIdRouteImport } from './routes/_app/olaylar.$id'
@@ -35,6 +36,11 @@ const AppBilgiRoute = AppBilgiRouteImport.update({
 const AppKomutaRoute = AppKomutaRouteImport.update({
   id: '/komuta',
   path: '/komuta',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProblemlerRoute = AppProblemlerRouteImport.update({
+  id: '/problemler',
+  path: '/problemler',
   getParentRoute: () => AppRoute,
 } as any)
 const AppTriageRoute = AppTriageRouteImport.update({
@@ -62,6 +68,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bilgi': typeof AppBilgiRoute
   '/komuta': typeof AppKomutaRoute
+  '/problemler': typeof AppProblemlerRoute
   '/triage': typeof AppTriageRoute
   '/olaylar/$id': typeof AppOlaylarIdRoute
   '/olaylar/yeni': typeof AppOlaylarYeniRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bilgi': typeof AppBilgiRoute
   '/komuta': typeof AppKomutaRoute
+  '/problemler': typeof AppProblemlerRoute
   '/triage': typeof AppTriageRoute
   '/olaylar/$id': typeof AppOlaylarIdRoute
   '/olaylar/yeni': typeof AppOlaylarYeniRoute
@@ -82,6 +90,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_app/bilgi': typeof AppBilgiRoute
   '/_app/komuta': typeof AppKomutaRoute
+  '/_app/problemler': typeof AppProblemlerRoute
   '/_app/triage': typeof AppTriageRoute
   '/_app/olaylar/$id': typeof AppOlaylarIdRoute
   '/_app/olaylar/yeni': typeof AppOlaylarYeniRoute
@@ -93,6 +102,7 @@ export interface FileRouteTypes {
     | '/'
     | '/bilgi'
     | '/komuta'
+    | '/problemler'
     | '/triage'
     | '/olaylar/$id'
     | '/olaylar/yeni'
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
     | '/'
     | '/bilgi'
     | '/komuta'
+    | '/problemler'
     | '/triage'
     | '/olaylar/$id'
     | '/olaylar/yeni'
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/_app/bilgi'
     | '/_app/komuta'
+    | '/_app/problemler'
     | '/_app/triage'
     | '/_app/olaylar/$id'
     | '/_app/olaylar/yeni'
@@ -153,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppKomutaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/problemler': {
+      id: '/_app/problemler'
+      path: '/problemler'
+      fullPath: '/problemler'
+      preLoaderRoute: typeof AppProblemlerRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/triage': {
       id: '/_app/triage'
       path: '/triage'
@@ -187,6 +206,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppBilgiRoute: typeof AppBilgiRoute
   AppKomutaRoute: typeof AppKomutaRoute
+  AppProblemlerRoute: typeof AppProblemlerRoute
   AppTriageRoute: typeof AppTriageRoute
   AppOlaylarIdRoute: typeof AppOlaylarIdRoute
   AppOlaylarYeniRoute: typeof AppOlaylarYeniRoute
@@ -196,6 +216,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppBilgiRoute: AppBilgiRoute,
   AppKomutaRoute: AppKomutaRoute,
+  AppProblemlerRoute: AppProblemlerRoute,
   AppTriageRoute: AppTriageRoute,
   AppOlaylarIdRoute: AppOlaylarIdRoute,
   AppOlaylarYeniRoute: AppOlaylarYeniRoute,
