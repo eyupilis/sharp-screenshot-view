@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppKomutaRouteImport } from './routes/_app/komuta'
+import { Route as AppOlaylarIndexRouteImport } from './routes/_app/olaylar.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -27,27 +28,35 @@ const AppKomutaRoute = AppKomutaRouteImport.update({
   path: '/komuta',
   getParentRoute: () => AppRoute,
 } as any)
+const AppOlaylarIndexRoute = AppOlaylarIndexRouteImport.update({
+  id: '/olaylar/',
+  path: '/olaylar/',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/komuta': typeof AppKomutaRoute
+  '/olaylar/': typeof AppOlaylarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/komuta': typeof AppKomutaRoute
+  '/olaylar': typeof AppOlaylarIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_app/komuta': typeof AppKomutaRoute
+  '/_app/olaylar/': typeof AppOlaylarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/komuta'
+  fullPaths: '/' | '/komuta' | '/olaylar/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/komuta'
-  id: '__root__' | '/' | '/_app' | '/_app/komuta'
+  to: '/' | '/komuta' | '/olaylar'
+  id: '__root__' | '/' | '/_app' | '/_app/komuta' | '/_app/olaylar/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -78,15 +87,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppKomutaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/olaylar/': {
+      id: '/_app/olaylar/'
+      path: '/olaylar'
+      fullPath: '/olaylar/'
+      preLoaderRoute: typeof AppOlaylarIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppKomutaRoute: typeof AppKomutaRoute
+  AppOlaylarIndexRoute: typeof AppOlaylarIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppKomutaRoute: AppKomutaRoute,
+  AppOlaylarIndexRoute: AppOlaylarIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
