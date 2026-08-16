@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppAnalitikRouteImport } from './routes/_app/analitik'
 import { Route as AppBilgiRouteImport } from './routes/_app/bilgi'
 import { Route as AppKomutaRouteImport } from './routes/_app/komuta'
 import { Route as AppProblemlerRouteImport } from './routes/_app/problemler'
@@ -27,6 +28,11 @@ const IndexRoute = IndexRouteImport.update({
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppAnalitikRoute = AppAnalitikRouteImport.update({
+  id: '/analitik',
+  path: '/analitik',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppBilgiRoute = AppBilgiRouteImport.update({
   id: '/bilgi',
@@ -66,6 +72,7 @@ const AppOlaylarYeniRoute = AppOlaylarYeniRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analitik': typeof AppAnalitikRoute
   '/bilgi': typeof AppBilgiRoute
   '/komuta': typeof AppKomutaRoute
   '/problemler': typeof AppProblemlerRoute
@@ -76,6 +83,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analitik': typeof AppAnalitikRoute
   '/bilgi': typeof AppBilgiRoute
   '/komuta': typeof AppKomutaRoute
   '/problemler': typeof AppProblemlerRoute
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/_app/analitik': typeof AppAnalitikRoute
   '/_app/bilgi': typeof AppBilgiRoute
   '/_app/komuta': typeof AppKomutaRoute
   '/_app/problemler': typeof AppProblemlerRoute
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analitik'
     | '/bilgi'
     | '/komuta'
     | '/problemler'
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/analitik'
     | '/bilgi'
     | '/komuta'
     | '/problemler'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/_app/analitik'
     | '/_app/bilgi'
     | '/_app/komuta'
     | '/_app/problemler'
@@ -150,6 +162,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/analitik': {
+      id: '/_app/analitik'
+      path: '/analitik'
+      fullPath: '/analitik'
+      preLoaderRoute: typeof AppAnalitikRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/bilgi': {
       id: '/_app/bilgi'
@@ -204,6 +223,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppAnalitikRoute: typeof AppAnalitikRoute
   AppBilgiRoute: typeof AppBilgiRoute
   AppKomutaRoute: typeof AppKomutaRoute
   AppProblemlerRoute: typeof AppProblemlerRoute
@@ -214,6 +234,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAnalitikRoute: AppAnalitikRoute,
   AppBilgiRoute: AppBilgiRoute,
   AppKomutaRoute: AppKomutaRoute,
   AppProblemlerRoute: AppProblemlerRoute,
