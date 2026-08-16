@@ -16,6 +16,7 @@ import { Route as AppBilgiRouteImport } from './routes/_app/bilgi'
 import { Route as AppKomutaRouteImport } from './routes/_app/komuta'
 import { Route as AppProblemlerRouteImport } from './routes/_app/problemler'
 import { Route as AppTriageRouteImport } from './routes/_app/triage'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AppOlaylarIndexRouteImport } from './routes/_app/olaylar.index'
 import { Route as AppOlaylarIdRouteImport } from './routes/_app/olaylar.$id'
 import { Route as AppOlaylarYeniRouteImport } from './routes/_app/olaylar.yeni'
@@ -54,6 +55,11 @@ const AppTriageRoute = AppTriageRouteImport.update({
   path: '/triage',
   getParentRoute: () => AppRoute,
 } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppOlaylarIndexRoute = AppOlaylarIndexRouteImport.update({
   id: '/olaylar/',
   path: '/olaylar/',
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/komuta': typeof AppKomutaRoute
   '/problemler': typeof AppProblemlerRoute
   '/triage': typeof AppTriageRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/olaylar/$id': typeof AppOlaylarIdRoute
   '/olaylar/yeni': typeof AppOlaylarYeniRoute
   '/olaylar/': typeof AppOlaylarIndexRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/komuta': typeof AppKomutaRoute
   '/problemler': typeof AppProblemlerRoute
   '/triage': typeof AppTriageRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/olaylar/$id': typeof AppOlaylarIdRoute
   '/olaylar/yeni': typeof AppOlaylarYeniRoute
   '/olaylar': typeof AppOlaylarIndexRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/_app/komuta': typeof AppKomutaRoute
   '/_app/problemler': typeof AppProblemlerRoute
   '/_app/triage': typeof AppTriageRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/_app/olaylar/$id': typeof AppOlaylarIdRoute
   '/_app/olaylar/yeni': typeof AppOlaylarYeniRoute
   '/_app/olaylar/': typeof AppOlaylarIndexRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/komuta'
     | '/problemler'
     | '/triage'
+    | '/.lovable/oauth/consent'
     | '/olaylar/$id'
     | '/olaylar/yeni'
     | '/olaylar/'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
     | '/komuta'
     | '/problemler'
     | '/triage'
+    | '/.lovable/oauth/consent'
     | '/olaylar/$id'
     | '/olaylar/yeni'
     | '/olaylar'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '/_app/komuta'
     | '/_app/problemler'
     | '/_app/triage'
+    | '/.lovable/oauth/consent'
     | '/_app/olaylar/$id'
     | '/_app/olaylar/yeni'
     | '/_app/olaylar/'
@@ -145,6 +157,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTriageRouteImport
       parentRoute: typeof AppRoute
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/olaylar/': {
       id: '/_app/olaylar/'
       path: '/olaylar'
@@ -249,6 +269,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
