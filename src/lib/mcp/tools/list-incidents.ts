@@ -9,12 +9,13 @@ export default defineTool({
     "List incidents in the signed-in user's tenant, newest first. Optionally filter by status or severity.",
   inputSchema: {
     status: z
-      .enum(["new", "triaged", "in_progress", "mitigated", "resolved", "closed"])
+      .enum(["new","triage_pending","triaged","investigating","mitigated","resolved","knowledge_review","closed","reopened"])
       .optional()
       .describe("Filter by incident status."),
-    severity: z.enum(["sev1", "sev2", "sev3", "sev4"]).optional().describe("Filter by approved severity."),
+    severity: z.enum(["P1", "P2", "P3", "P4"]).optional().describe("Filter by approved severity."),
     limit: z.number().int().min(1).max(50).default(20).describe("Maximum number of incidents."),
   },
+  outputSchema: { incidents: z.array(z.record(z.string(), z.unknown())) },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ status, severity, limit }, ctx) => {
     if (!ctx.isAuthenticated()) return notAuthenticated();

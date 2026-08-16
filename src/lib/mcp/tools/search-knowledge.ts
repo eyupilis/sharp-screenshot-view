@@ -11,6 +11,7 @@ export default defineTool({
     query: z.string().trim().min(2).describe("Keyword or phrase to search for."),
     limit: z.number().int().min(1).max(25).default(10).describe("Maximum number of articles."),
   },
+  outputSchema: { articles: z.array(z.record(z.string(), z.unknown())) },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ query, limit }, ctx) => {
     if (!ctx.isAuthenticated()) return notAuthenticated();

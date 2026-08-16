@@ -11,11 +11,12 @@ export default defineTool({
     description: z.string().trim().min(10).describe("What is happening, impact and symptoms."),
     environment: z.enum(["prod", "staging", "test"]).default("prod").describe("Affected environment."),
     reported_severity: z
-      .enum(["sev1", "sev2", "sev3", "sev4"])
+      .enum(["P1", "P2", "P3", "P4"])
       .optional()
       .describe("Severity reported by the human."),
     category: z.string().trim().optional().describe("Optional category, e.g. payment, card, core-banking."),
   },
+  outputSchema: { incident: z.record(z.string(), z.unknown()) },
   annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },
   handler: async ({ title, description, environment, reported_severity, category }, ctx) => {
     if (!ctx.isAuthenticated()) return notAuthenticated();

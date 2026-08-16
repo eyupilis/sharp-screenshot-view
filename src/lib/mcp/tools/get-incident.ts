@@ -10,6 +10,11 @@ export default defineTool({
   inputSchema: {
     incident: z.string().trim().min(1).describe("Incident UUID or human reference code."),
   },
+  outputSchema: {
+    incident: z.record(z.string(), z.unknown()),
+    hypotheses: z.array(z.record(z.string(), z.unknown())),
+    recommended_actions: z.array(z.record(z.string(), z.unknown())),
+  },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ incident }, ctx) => {
     if (!ctx.isAuthenticated()) return notAuthenticated();

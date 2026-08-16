@@ -34,21 +34,24 @@
               "type": "string",
               "enum": [
                 "new",
+                "triage_pending",
                 "triaged",
-                "in_progress",
+                "investigating",
                 "mitigated",
                 "resolved",
-                "closed"
+                "knowledge_review",
+                "closed",
+                "reopened"
               ]
             },
             "severity": {
               "description": "Filter by approved severity.",
               "type": "string",
               "enum": [
-                "sev1",
-                "sev2",
-                "sev3",
-                "sev4"
+                "P1",
+                "P2",
+                "P3",
+                "P4"
               ]
             },
             "limit": {
@@ -60,7 +63,25 @@
             }
           }
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "incidents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              }
+            }
+          },
+          "required": [
+            "incidents"
+          ]
+        }
       },
       {
         "name": "get_incident",
@@ -85,7 +106,44 @@
             "incident"
           ]
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "incident": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            },
+            "hypotheses": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              }
+            },
+            "recommended_actions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              }
+            }
+          },
+          "required": [
+            "incident",
+            "hypotheses",
+            "recommended_actions"
+          ]
+        }
       },
       {
         "name": "search_knowledge",
@@ -117,7 +175,25 @@
             "query"
           ]
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "articles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              }
+            }
+          },
+          "required": [
+            "articles"
+          ]
+        }
       },
       {
         "name": "create_incident",
@@ -156,10 +232,10 @@
               "description": "Severity reported by the human.",
               "type": "string",
               "enum": [
-                "sev1",
-                "sev2",
-                "sev3",
-                "sev4"
+                "P1",
+                "P2",
+                "P3",
+                "P4"
               ]
             },
             "category": {
@@ -172,7 +248,22 @@
             "description"
           ]
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "incident": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            }
+          },
+          "required": [
+            "incident"
+          ]
+        }
       }
     ]
   }
