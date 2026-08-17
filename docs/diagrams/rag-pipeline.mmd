@@ -1,0 +1,8 @@
+flowchart LR
+  S[Sanitize] --> P[ACL prefilter]
+  P --> R[TF-IDF rank]
+  R --> C[Confidence calibration]
+  C -->|0.65 or more| G[Grounded generation]
+  C -->|below 0.65| N[No action and ask for evidence]
+  G --> V[Zod and citation validation]
+  V --> H[Human decision]

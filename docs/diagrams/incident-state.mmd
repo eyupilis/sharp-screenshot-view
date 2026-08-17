@@ -1,0 +1,13 @@
+stateDiagram-v2
+  [*] --> new
+  new --> triage_pending
+  triage_pending --> triaged
+  triage_pending --> investigating: human manual triage
+  triaged --> investigating
+  investigating --> mitigated
+  investigating --> resolved: summary required
+  mitigated --> resolved: summary required
+  resolved --> knowledge_review
+  knowledge_review --> closed
+  resolved --> closed: P3/P4 only
+  closed --> reopened

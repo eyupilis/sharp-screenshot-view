@@ -1,0 +1,10 @@
+flowchart TD
+  UI[React operator UI] --> AUTH[Supabase Auth and RLS]
+  UI --> SF[Authenticated server function]
+  SF --> RET[Tenant and shared ACL prefilter plus TF-IDF]
+  RET --> GATE[Evidence gate and Zod]
+  GATE --> AI[Lovable AI Gateway]
+  GATE --> FB[Deterministic fallback]
+  AI --> HUMAN[Human approval]
+  FB --> HUMAN
+  HUMAN --> DB[Incident audit and knowledge]
