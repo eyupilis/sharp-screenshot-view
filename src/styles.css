@@ -130,9 +130,11 @@
     color-mix(in oklab, var(--surface-strong) 90%, transparent),
     color-mix(in oklab, var(--surface) 92%, transparent)
   );
-  --shadow-panel: 0 1px 0 0 color-mix(in oklab, oklch(1 0 0) 6%, transparent) inset,
+  --shadow-panel:
+    0 1px 0 0 color-mix(in oklab, oklch(1 0 0) 6%, transparent) inset,
     0 24px 60px -30px oklch(0 0 0 / 0.8);
-  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--brand) 25%, transparent),
+  --shadow-glow:
+    0 0 0 1px color-mix(in oklab, var(--brand) 25%, transparent),
     0 30px 80px -40px color-mix(in oklab, var(--brand) 70%, transparent);
 }
 
@@ -290,12 +292,11 @@
 
 /* Particle-sphere echo of the GTech mark */
 @utility brand-orb {
-  background:
-    radial-gradient(
-      circle at 50% 50%,
-      color-mix(in oklab, var(--brand-glow) 85%, transparent) 0%,
-      color-mix(in oklab, var(--brand) 55%, transparent) 38%,
-      transparent 68%
-    );
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklab, var(--brand-glow) 85%, transparent) 0%,
+    color-mix(in oklab, var(--brand) 55%, transparent) 38%,
+    transparent 68%
+  );
   filter: blur(6px);
 }

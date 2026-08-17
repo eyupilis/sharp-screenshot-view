@@ -103,9 +103,7 @@ function CommandCenter() {
               </p>
               <span
                 className={
-                  idx === 1
-                    ? "h-2 w-2 rounded-full bg-sev-p1"
-                    : "h-2 w-2 rounded-full bg-brand/60"
+                  idx === 1 ? "h-2 w-2 rounded-full bg-sev-p1" : "h-2 w-2 rounded-full bg-brand/60"
                 }
                 aria-hidden
               />

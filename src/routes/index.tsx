@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import {
-  Activity,
-  ArrowRight,
-  BookOpen,
-  Gauge,
-  Lock,
-  Sparkles,
-  Workflow,
-} from "lucide-react";
+import { Activity, ArrowRight, BookOpen, Gauge, Lock, Sparkles, Workflow } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -152,7 +144,10 @@ function Landing() {
         className="brand-orb pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 opacity-40"
         aria-hidden
       />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[70vh] grid-field" aria-hidden />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[70vh] grid-field"
+        aria-hidden
+      />
 
       <header className="relative z-10 mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
         <div className="flex items-center gap-3">
@@ -171,7 +166,6 @@ function Landing() {
           </Button>
         </div>
       </header>
-
 
       <main className="relative z-10 mx-auto max-w-7xl px-5 pb-24 lg:px-8">
         <section className="grid items-start gap-12 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
