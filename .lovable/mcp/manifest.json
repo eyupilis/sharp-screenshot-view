@@ -5,7 +5,9 @@
   "auth": {
     "type": "oauth",
     "issuer": "https://ymywqlofhioagdhszbim.supabase.co/auth/v1",
-    "accepted_audiences": ["authenticated"]
+    "accepted_audiences": [
+      "authenticated"
+    ]
   },
   "mcp": {
     "server": {
@@ -45,7 +47,12 @@
             "severity": {
               "description": "Filter by approved severity.",
               "type": "string",
-              "enum": ["P1", "P2", "P3", "P4"]
+              "enum": [
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+              ]
             },
             "limit": {
               "default": 20,
@@ -71,7 +78,9 @@
               }
             }
           },
-          "required": ["incidents"]
+          "required": [
+            "incidents"
+          ]
         }
       },
       {
@@ -93,7 +102,9 @@
               "description": "Incident UUID or human reference code."
             }
           },
-          "required": ["incident"]
+          "required": [
+            "incident"
+          ]
         },
         "outputSchema": {
           "$schema": "http://json-schema.org/draft-07/schema#",
@@ -127,7 +138,11 @@
               }
             }
           },
-          "required": ["incident", "hypotheses", "recommended_actions"]
+          "required": [
+            "incident",
+            "hypotheses",
+            "recommended_actions"
+          ]
         }
       },
       {
@@ -156,7 +171,9 @@
               "maximum": 25
             }
           },
-          "required": ["query"]
+          "required": [
+            "query"
+          ]
         },
         "outputSchema": {
           "$schema": "http://json-schema.org/draft-07/schema#",
@@ -173,7 +190,9 @@
               }
             }
           },
-          "required": ["articles"]
+          "required": [
+            "articles"
+          ]
         }
       },
       {
@@ -203,19 +222,31 @@
               "default": "prod",
               "description": "Affected environment.",
               "type": "string",
-              "enum": ["prod", "staging", "test"]
+              "enum": [
+                "prod",
+                "staging",
+                "test"
+              ]
             },
             "reported_severity": {
               "description": "Severity reported by the human.",
               "type": "string",
-              "enum": ["P1", "P2", "P3", "P4"]
+              "enum": [
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+              ]
             },
             "category": {
               "description": "Optional category, e.g. payment, card, core-banking.",
               "type": "string"
             }
           },
-          "required": ["title", "description"]
+          "required": [
+            "title",
+            "description"
+          ]
         },
         "outputSchema": {
           "$schema": "http://json-schema.org/draft-07/schema#",
@@ -229,7 +260,9 @@
               "additionalProperties": {}
             }
           },
-          "required": ["incident"]
+          "required": [
+            "incident"
+          ]
         }
       }
     ]
