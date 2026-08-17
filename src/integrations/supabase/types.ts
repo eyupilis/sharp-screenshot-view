@@ -271,6 +271,100 @@ export type Database = {
           },
         ]
       }
+      evaluation_cases: {
+        Row: {
+          active: boolean
+          case_key: string
+          created_at: string
+          evidence_required: boolean
+          expected_category: string
+          expected_severity: Database["public"]["Enums"]["severity_level"]
+          id: string
+          input_text: string
+          organization_id: string
+        }
+        Insert: {
+          active?: boolean
+          case_key: string
+          created_at?: string
+          evidence_required?: boolean
+          expected_category: string
+          expected_severity: Database["public"]["Enums"]["severity_level"]
+          id?: string
+          input_text: string
+          organization_id: string
+        }
+        Update: {
+          active?: boolean
+          case_key?: string
+          created_at?: string
+          evidence_required?: boolean
+          expected_category?: string
+          expected_severity?: Database["public"]["Enums"]["severity_level"]
+          id?: string
+          input_text?: string
+          organization_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evaluation_cases_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evaluation_runs: {
+        Row: {
+          category_accuracy: number
+          created_at: string
+          created_by: string | null
+          id: string
+          mode: string
+          no_answer_accuracy: number
+          organization_id: string
+          passed_cases: number
+          severity_accuracy: number
+          suite_version: string
+          total_cases: number
+        }
+        Insert: {
+          category_accuracy: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          mode?: string
+          no_answer_accuracy: number
+          organization_id: string
+          passed_cases: number
+          severity_accuracy: number
+          suite_version: string
+          total_cases: number
+        }
+        Update: {
+          category_accuracy?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          mode?: string
+          no_answer_accuracy?: number
+          organization_id?: string
+          passed_cases?: number
+          severity_accuracy?: number
+          suite_version?: string
+          total_cases?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evaluation_runs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financial_systems: {
         Row: {
           code: string
@@ -567,6 +661,59 @@ export type Database = {
             columns: ["system_id"]
             isOneToOne: false
             referencedRelation: "financial_systems"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ingestion_jobs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          file_name: string
+          id: string
+          mime_type: string
+          organization_id: string
+          redaction_status: string
+          rejection_reason: string | null
+          sha256: string | null
+          size_bytes: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          file_name: string
+          id?: string
+          mime_type: string
+          organization_id: string
+          redaction_status?: string
+          rejection_reason?: string | null
+          sha256?: string | null
+          size_bytes: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string
+          id?: string
+          mime_type?: string
+          organization_id?: string
+          redaction_status?: string
+          rejection_reason?: string | null
+          sha256?: string | null
+          size_bytes?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingestion_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -1087,6 +1234,57 @@ export type Database = {
           },
           {
             foreignKeyName: "root_cause_hypotheses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhook_events: {
+        Row: {
+          event_type: string
+          id: string
+          idempotency_key: string
+          incident_id: string | null
+          organization_id: string
+          payload_digest: string
+          received_at: string
+          source: string
+          status: string
+        }
+        Insert: {
+          event_type: string
+          id?: string
+          idempotency_key: string
+          incident_id?: string | null
+          organization_id: string
+          payload_digest: string
+          received_at?: string
+          source: string
+          status?: string
+        }
+        Update: {
+          event_type?: string
+          id?: string
+          idempotency_key?: string
+          incident_id?: string | null
+          organization_id?: string
+          payload_digest?: string
+          received_at?: string
+          source?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_events_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "incidents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "webhook_events_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
