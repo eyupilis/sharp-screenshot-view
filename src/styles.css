@@ -68,59 +68,61 @@
 :root {
   --radius: 10px;
 
-  --background: oklch(0.16 0.012 265);
-  --foreground: oklch(0.95 0.006 260);
-  --surface: oklch(0.204 0.014 265);
-  --surface-strong: oklch(0.246 0.016 265);
-  --card: oklch(0.208 0.014 265);
-  --card-foreground: oklch(0.95 0.006 260);
-  --popover: oklch(0.212 0.015 265);
-  --popover-foreground: oklch(0.95 0.006 260);
+  /* Palette pulled straight from the GTech mark:
+     ink black field, machined graphite greys, ember gold core. */
+  --background: oklch(0.135 0.004 60);
+  --foreground: oklch(0.93 0.004 70);
+  --surface: oklch(0.178 0.005 62);
+  --surface-strong: oklch(0.215 0.006 62);
+  --card: oklch(0.181 0.005 62);
+  --card-foreground: oklch(0.93 0.004 70);
+  --popover: oklch(0.192 0.005 62);
+  --popover-foreground: oklch(0.93 0.004 70);
 
-  --primary: oklch(0.74 0.168 58);
-  --primary-foreground: oklch(0.18 0.02 60);
-  --secondary: oklch(0.26 0.016 265);
-  --secondary-foreground: oklch(0.93 0.008 260);
-  --muted: oklch(0.25 0.014 265);
-  --muted-foreground: oklch(0.7 0.014 262);
-  --accent: oklch(0.28 0.02 265);
-  --accent-foreground: oklch(0.95 0.006 260);
+  --primary: oklch(0.75 0.155 62);
+  --primary-foreground: oklch(0.16 0.02 60);
+  --secondary: oklch(0.238 0.005 62);
+  --secondary-foreground: oklch(0.9 0.004 70);
+  --muted: oklch(0.225 0.005 62);
+  --muted-foreground: oklch(0.68 0.006 70);
+  --accent: oklch(0.26 0.008 62);
+  --accent-foreground: oklch(0.93 0.004 70);
 
-  /* GTech ember */
-  --brand: oklch(0.76 0.168 62);
-  --brand-foreground: oklch(0.86 0.13 72);
-  --brand-soft: oklch(0.3 0.055 60);
-  --brand-glow: oklch(0.83 0.16 80);
+  /* GTech ember core -> corona */
+  --brand: oklch(0.74 0.16 55);
+  --brand-foreground: oklch(0.87 0.12 75);
+  --brand-soft: oklch(0.27 0.05 52);
+  --brand-glow: oklch(0.85 0.155 88);
 
-  --destructive: oklch(0.62 0.2 22);
-  --destructive-foreground: oklch(0.99 0 0);
-  --success: oklch(0.72 0.15 158);
-  --success-foreground: oklch(0.18 0.03 160);
-  --warning: oklch(0.8 0.14 78);
-  --warning-foreground: oklch(0.2 0.02 70);
-  --info: oklch(0.7 0.13 245);
-  --info-foreground: oklch(0.16 0.02 250);
+  --destructive: oklch(0.6 0.19 28);
+  --destructive-foreground: oklch(0.98 0 0);
+  --success: oklch(0.73 0.1 150);
+  --success-foreground: oklch(0.17 0.03 150);
+  --warning: oklch(0.82 0.14 84);
+  --warning-foreground: oklch(0.19 0.02 70);
+  --info: oklch(0.72 0.02 80);
+  --info-foreground: oklch(0.16 0.005 70);
 
-  --sev-p1: oklch(0.65 0.2 22);
-  --sev-p2: oklch(0.78 0.16 62);
-  --sev-p3: oklch(0.7 0.12 245);
-  --sev-p4: oklch(0.66 0.02 262);
+  --sev-p1: oklch(0.62 0.19 28);
+  --sev-p2: oklch(0.79 0.15 62);
+  --sev-p3: oklch(0.84 0.11 92);
+  --sev-p4: oklch(0.62 0.008 70);
 
-  --border: oklch(0.3 0.014 265);
-  --input: oklch(0.3 0.014 265);
-  --ring: oklch(0.76 0.168 62);
+  --border: oklch(0.278 0.006 62);
+  --input: oklch(0.278 0.006 62);
+  --ring: oklch(0.74 0.16 55);
 
-  --chart-1: oklch(0.76 0.168 62);
-  --chart-2: oklch(0.7 0.13 245);
-  --chart-3: oklch(0.72 0.15 158);
-  --chart-4: oklch(0.65 0.2 22);
-  --chart-5: oklch(0.72 0.03 262);
+  --chart-1: oklch(0.74 0.16 55);
+  --chart-2: oklch(0.85 0.14 90);
+  --chart-3: oklch(0.73 0.1 150);
+  --chart-4: oklch(0.6 0.19 28);
+  --chart-5: oklch(0.68 0.008 70);
 
-  --sidebar: oklch(0.185 0.014 265);
-  --sidebar-foreground: oklch(0.9 0.008 260);
-  --sidebar-accent: oklch(0.28 0.03 62);
-  --sidebar-accent-foreground: oklch(0.96 0.02 70);
-  --sidebar-border: oklch(0.28 0.014 265);
+  --sidebar: oklch(0.155 0.004 60);
+  --sidebar-foreground: oklch(0.88 0.005 70);
+  --sidebar-accent: oklch(0.26 0.035 56);
+  --sidebar-accent-foreground: oklch(0.94 0.03 75);
+  --sidebar-border: oklch(0.25 0.006 62);
 
   --gradient-brand: linear-gradient(135deg, var(--brand), var(--brand-glow));
   --gradient-surface: linear-gradient(
@@ -226,12 +228,12 @@
   background:
     radial-gradient(
       40% 60% at 20% 20%,
-      color-mix(in oklab, var(--brand) 30%, transparent),
+      color-mix(in oklab, var(--brand) 26%, transparent),
       transparent 70%
     ),
     radial-gradient(
-      35% 55% at 75% 10%,
-      color-mix(in oklab, var(--info) 22%, transparent),
+      30% 50% at 72% 8%,
+      color-mix(in oklab, var(--brand-glow) 20%, transparent),
       transparent 70%
     );
   filter: blur(20px);
@@ -284,4 +286,16 @@
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Particle-sphere echo of the GTech mark */
+@utility brand-orb {
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      color-mix(in oklab, var(--brand-glow) 85%, transparent) 0%,
+      color-mix(in oklab, var(--brand) 55%, transparent) 38%,
+      transparent 68%
+    );
+  filter: blur(6px);
 }
