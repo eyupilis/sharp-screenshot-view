@@ -39,15 +39,17 @@ export function AppShell({ userId, children }: { userId: string; children: React
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
-        <div className="flex h-20 items-center gap-2.5 px-5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
-            <ShieldCheck className="h-5 w-5" aria-hidden />
-          </span>
+        <div className="flex h-20 items-center gap-3 px-5">
+          <img src={logo.url} alt="GTech" className="h-8 w-auto" />
+          <span className="h-7 w-px bg-sidebar-border" aria-hidden />
           <div className="leading-tight">
             <p className="font-display text-[15px] font-semibold tracking-tight">ResolveIQ</p>
-            <p className="text-[11px] text-sidebar-foreground/55">Incident Intelligence</p>
+            <p className="text-[10px] uppercase tracking-[0.16em] text-sidebar-foreground/55">
+              Incident Intelligence
+            </p>
           </div>
         </div>
+
 
         <nav className="flex-1 space-y-0.5 px-3 py-2" aria-label="Ana gezinme">
           {NAV.map((item) => {
