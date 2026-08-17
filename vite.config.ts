@@ -9,7 +9,21 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 
 export default defineConfig({
-  vite: { plugins: [mcpPlugin()] },
+  vite: {
+    // These are public browser credentials, not secrets. Defining them here keeps
+    // Cloud/GitHub production builds working when runtime-only env vars are not
+    // available while Vite compiles the client bundle.
+    define: {
+      "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(
+        "https://ymywqlofhioagdhszbim.supabase.co",
+      ),
+      "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
+        "sb_publishable_XHmraEQe1OuwjnTcMX9OvA_aItcDmiE",
+      ),
+      "import.meta.env.VITE_SUPABASE_PROJECT_ID": JSON.stringify("ymywqlofhioagdhszbim"),
+    },
+    plugins: [mcpPlugin()],
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
