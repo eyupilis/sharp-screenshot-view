@@ -149,25 +149,30 @@ function Landing() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       <div className="aurora" aria-hidden />
+      <div
+        className="brand-orb pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 opacity-40"
+        aria-hidden
+      />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[70vh] grid-field" aria-hidden />
 
       <header className="relative z-10 mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
-            <ShieldCheck className="h-5 w-5" aria-hidden />
-          </span>
-          <div className="leading-tight">
+        <div className="flex items-center gap-3">
+          <img src={logo.url} alt="GTech" className="h-9 w-auto" />
+          <span className="hidden h-7 w-px bg-border sm:block" aria-hidden />
+          <div className="hidden leading-tight sm:block">
             <p className="font-display text-[15px] font-semibold tracking-tight">ResolveIQ</p>
-            <p className="text-[11px] text-muted-foreground">Incident Intelligence</p>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+              Incident Intelligence
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <img src={logo.url} alt="GTech" className="hidden h-8 w-auto opacity-90 sm:block" />
           <Button size="sm" variant="outline" asChild>
             <a href="#giris">Giriş yap</a>
           </Button>
         </div>
       </header>
+
 
       <main className="relative z-10 mx-auto max-w-7xl px-5 pb-24 lg:px-8">
         <section className="grid items-start gap-12 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
