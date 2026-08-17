@@ -49,7 +49,6 @@ export function AppShell({ userId, children }: { userId: string; children: React
           </div>
         </div>
 
-
         <nav className="flex-1 space-y-0.5 px-3 py-2" aria-label="Ana gezinme">
           {NAV.map((item) => {
             const active = pathname.startsWith(item.to);
