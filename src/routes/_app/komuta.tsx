@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession, useMembership } from "@/lib/session";
 import { PageHeader } from "@/components/app-shell";
 import { SeverityBadge, StatusBadge } from "@/components/badges";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_app/komuta")({
