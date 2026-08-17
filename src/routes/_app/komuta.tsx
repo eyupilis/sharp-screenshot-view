@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession, useMembership } from "@/lib/session";
 import { PageHeader } from "@/components/app-shell";
 import { SeverityBadge, StatusBadge } from "@/components/badges";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_app/komuta")({
@@ -94,37 +94,50 @@ function CommandCenter() {
         }
       />
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((s) => (
-          <Card key={s.label}>
-            <CardContent className="pt-6">
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">{s.label}</p>
-              <p className="mt-1 text-3xl font-semibold tabular-nums">{s.value}</p>
-            </CardContent>
-          </Card>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {stats.map((s, idx) => (
+          <div key={s.label} className="panel p-5">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                {s.label}
+              </p>
+              <span
+                className={
+                  idx === 1
+                    ? "h-2 w-2 rounded-full bg-sev-p1"
+                    : "h-2 w-2 rounded-full bg-brand/60"
+                }
+                aria-hidden
+              />
+            </div>
+            <p className="mt-3 font-display text-4xl font-semibold tabular-nums">{s.value}</p>
+          </div>
         ))}
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-base">Aktif olaylar</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
+      <div className="mt-6 grid gap-5 lg:grid-cols-3">
+        <section className="panel lg:col-span-2">
+          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+            <h2 className="font-display text-base font-semibold">Aktif olaylar</h2>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/olaylar">Tümü</Link>
+            </Button>
+          </div>
+          <div className="space-y-2 p-3">
             {openIncidents.length === 0 ? (
-              <p className="py-6 text-center text-sm text-muted-foreground">Açık incident yok.</p>
+              <p className="py-10 text-center text-sm text-muted-foreground">Açık incident yok.</p>
             ) : (
               openIncidents.slice(0, 8).map((i) => (
                 <Link
                   key={i.id}
                   to="/olaylar/$id"
                   params={{ id: i.id }}
-                  className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2.5 transition-colors hover:bg-muted/50"
+                  className="flex items-center justify-between gap-3 rounded-lg border border-transparent px-3 py-3 transition-colors hover:border-border hover:bg-surface-strong/60"
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{i.title}</p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {i.reference} · {systemName(i.system_id)}
+                      <span className="font-mono">{i.reference}</span> · {systemName(i.system_id)}
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
@@ -134,29 +147,34 @@ function CommandCenter() {
                 </Link>
               ))
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </section>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Son AI çalıştırmaları</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
+        <section className="panel">
+          <div className="border-b border-border px-5 py-4">
+            <h2 className="font-display text-base font-semibold">Son AI çalıştırmaları</h2>
+          </div>
+          <div className="space-y-2 p-3">
             {(data?.runs ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">Henüz AI çalıştırması yok.</p>
+              <p className="px-2 py-8 text-center text-sm text-muted-foreground">
+                Henüz AI çalıştırması yok.
+              </p>
             ) : (
               data!.runs.map((r) => (
-                <div key={r.id} className="rounded-md border border-border px-3 py-2 text-xs">
+                <div
+                  key={r.id}
+                  className="rounded-lg border border-border bg-surface-strong/40 px-3 py-2.5 text-xs"
+                >
                   <p className="font-medium">{r.run_type === "triage" ? "Triage" : r.run_type}</p>
-                  <p className="text-muted-foreground">
+                  <p className="mt-0.5 text-muted-foreground">
                     {r.mode === "live" ? "Canlı model" : "Deterministik mod"} ·{" "}
                     {new Date(r.created_at).toLocaleString("tr-TR")}
                   </p>
                 </div>
               ))
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </section>
       </div>
     </>
   );

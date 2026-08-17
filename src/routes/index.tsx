@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ShieldCheck, Sparkles, BookOpen, Lock } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  BookOpen,
+  Gauge,
+  Lock,
+  ShieldCheck,
+  Sparkles,
+  Workflow,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -8,7 +17,6 @@ import { useSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import logo from "@/assets/gtech-logo.png.asset.json";
 
@@ -32,6 +40,46 @@ export const Route = createFileRoute("/")({
   }),
   component: Landing,
 });
+
+const FEATURES = [
+  {
+    icon: Sparkles,
+    title: "Kanıtlı AI triage",
+    text: "Kategori, severity önerisi ve eksik bilgi listesi — her satır kaynak gösterir, düşük kanıtta model susar.",
+  },
+  {
+    icon: BookOpen,
+    title: "Kurumsal hafıza",
+    text: "Çözülen her incident, küratör incelemesinden geçtikten sonra yeniden kullanılabilir runbook'a dönüşür.",
+  },
+  {
+    icon: Lock,
+    title: "Tenant izolasyonu",
+    text: "Veriler kurum bazında ayrışır; retrieval önce tenant filtresinden geçer, sonra sıralanır.",
+  },
+  {
+    icon: Workflow,
+    title: "İnsan kararı esas",
+    text: "AI yalnızca öneri üretir. Statü, severity ve aksiyon değişimini her zaman bir insan onaylar.",
+  },
+  {
+    icon: Gauge,
+    title: "Ölçülebilir kalite",
+    text: "Değerlendirme senaryolarıyla kategori, severity ve no-answer doğruluğu sürekli izlenir.",
+  },
+  {
+    icon: Activity,
+    title: "Tam denetim izi",
+    text: "Her AI çalıştırması ve her insan kararı zaman damgalı audit kaydına yazılır.",
+  },
+] as const;
+
+const METRICS = [
+  { value: "P1→P4", label: "Severity yönetimi" },
+  { value: "%65", label: "Kanıt eşiği altında no-answer" },
+  { value: "12+", label: "Doğrulanmış bilgi kaydı" },
+  { value: "100%", label: "Kararlarda denetim izi" },
+] as const;
 
 function Landing() {
   const navigate = useNavigate();
@@ -99,79 +147,92 @@ function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="flex h-16 items-center justify-between border-b border-border px-4 lg:px-8">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-brand" aria-hidden />
-          <span className="font-semibold">ResolveIQ</span>
+    <div className="relative min-h-screen overflow-hidden bg-background">
+      <div className="aurora" aria-hidden />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[70vh] grid-field" aria-hidden />
+
+      <header className="relative z-10 mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-brand text-primary-foreground">
+            <ShieldCheck className="h-5 w-5" aria-hidden />
+          </span>
+          <div className="leading-tight">
+            <p className="font-display text-[15px] font-semibold tracking-tight">ResolveIQ</p>
+            <p className="text-[11px] text-muted-foreground">Incident Intelligence</p>
+          </div>
         </div>
-        <img src={logo.url} alt="GTech" className="h-7 w-auto" />
+        <div className="flex items-center gap-4">
+          <img src={logo.url} alt="GTech" className="hidden h-8 w-auto opacity-90 sm:block" />
+          <Button size="sm" variant="outline" asChild>
+            <a href="#giris">Giriş yap</a>
+          </Button>
+        </div>
       </header>
 
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 lg:grid-cols-2 lg:py-20">
-        <div>
-          <span className="inline-flex rounded-md border border-brand/30 bg-brand-soft px-2.5 py-1 text-[11px] font-medium text-brand-foreground">
-            GTech Academy Concept Project
-          </span>
-          <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight">
-            Finansal arızaları kanıta dayalı zekâyla yönetin
-          </h1>
-          <p className="mt-4 max-w-xl text-muted-foreground">
-            ResolveIQ; kart, ödeme, mutabakat ve çekirdek bankacılık sistemlerinde yaşanan
-            incident'ları sınıflandırır, kök neden hipotezleri üretir ve her öneriyi kurum içi
-            doğrulanmış bilgi kayıtlarına dayandırır. Kararı her zaman insan verir.
-          </p>
-          <ul className="mt-8 space-y-4">
-            {[
-              {
-                icon: Sparkles,
-                title: "Kanıtlı AI triage",
-                text: "Kategori, severity önerisi ve eksik bilgi listesi — her biri kaynak gösterir.",
-              },
-              {
-                icon: BookOpen,
-                title: "Kurumsal hafıza",
-                text: "Çözülen her incident, incelemeden geçtikten sonra yeniden kullanılabilir bilgiye dönüşür.",
-              },
-              {
-                icon: Lock,
-                title: "Tenant izolasyonu ve denetim izi",
-                text: "Veriler kurum bazında ayrışır; her AI çalıştırması ve insan kararı loglanır.",
-              },
-            ].map((f) => (
-              <li key={f.title} className="flex gap-3">
-                <f.icon className="mt-0.5 h-5 w-5 shrink-0 text-brand" aria-hidden />
-                <div>
-                  <p className="text-sm font-medium">{f.title}</p>
-                  <p className="text-sm text-muted-foreground">{f.text}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-8 text-xs text-muted-foreground">
-            Educational prototype — not an official GTech product. Tüm veriler kurgusaldır.
-          </p>
-        </div>
+      <main className="relative z-10 mx-auto max-w-7xl px-5 pb-24 lg:px-8">
+        <section className="grid items-start gap-12 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
+          <div className="rise">
+            <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand-soft/40 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-brand-foreground">
+              <span className="pulse-dot" aria-hidden /> GTech Academy Concept Project
+            </span>
 
-        <Card className="h-fit">
-          <CardHeader>
-            <CardTitle>Çalışma alanına giriş</CardTitle>
-            <CardDescription>Demo tenant: Demo Bank</CardDescription>
-          </CardHeader>
-          <CardContent>
+            <h1 className="mt-7 font-display text-[2.65rem] font-semibold leading-[1.05] tracking-tight sm:text-6xl">
+              Finansal arızaları
+              <br />
+              <span className="text-gradient-brand">kanıta dayalı zekâyla</span>
+              <br />
+              yönetin.
+            </h1>
+
+            <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+              ResolveIQ; kart, ödeme, mutabakat ve çekirdek bankacılık sistemlerinde yaşanan
+              incident'ları sınıflandırır, kök neden hipotezleri üretir ve her öneriyi kurum içi
+              doğrulanmış bilgi kayıtlarına dayandırır. Kararı her zaman insan verir.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Button size="lg" asChild>
+                <a href="#giris">
+                  Çalışma alanına gir <ArrowRight className="ml-1.5 h-4 w-4" aria-hidden />
+                </a>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <a href="#yetenekler">Yetenekleri incele</a>
+              </Button>
+            </div>
+
+            <dl className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-4">
+              {METRICS.map((m) => (
+                <div key={m.label} className="bg-surface px-4 py-4">
+                  <dt className="font-display text-xl font-semibold text-foreground">{m.value}</dt>
+                  <dd className="mt-1 text-[11px] leading-snug text-muted-foreground">{m.label}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div id="giris" className="rise panel panel-glow p-6 sm:p-7 lg:sticky lg:top-10">
+            <div className="mb-6">
+              <h2 className="font-display text-xl font-semibold">Çalışma alanına giriş</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Demo tenant: <span className="font-mono text-brand-foreground">Demo Bank</span>
+              </p>
+            </div>
+
             <Tabs defaultValue="signin">
-              <TabsList className="mb-4 grid w-full grid-cols-2">
+              <TabsList className="mb-5 grid w-full grid-cols-2">
                 <TabsTrigger value="signin">Giriş</TabsTrigger>
                 <TabsTrigger value="signup">Kayıt</TabsTrigger>
               </TabsList>
               <TabsContent value="signin">
-                <form className="space-y-3" onSubmit={signIn}>
+                <form className="space-y-4" onSubmit={signIn}>
                   <div className="space-y-1.5">
                     <Label htmlFor="email">E-posta</Label>
                     <Input
                       id="email"
                       type="email"
                       required
+                      placeholder="ad.soyad@demobank.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -186,13 +247,13 @@ function Landing() {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
-                  <Button type="submit" className="w-full" disabled={busy}>
+                  <Button type="submit" size="lg" className="w-full" disabled={busy}>
                     Giriş yap
                   </Button>
                 </form>
               </TabsContent>
               <TabsContent value="signup">
-                <form className="space-y-3" onSubmit={signUp}>
+                <form className="space-y-4" onSubmit={signUp}>
                   <div className="space-y-1.5">
                     <Label htmlFor="name">Ad soyad</Label>
                     <Input
@@ -222,22 +283,86 @@ function Landing() {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
-                  <Button type="submit" className="w-full" disabled={busy}>
+                  <Button type="submit" size="lg" className="w-full" disabled={busy}>
                     Hesap oluştur
                   </Button>
                 </form>
               </TabsContent>
             </Tabs>
-            <div className="my-4 flex items-center gap-3 text-[11px] text-muted-foreground">
-              <span className="h-px flex-1 bg-border" /> veya{" "}
+
+            <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-widest text-muted-foreground">
+              <span className="h-px flex-1 bg-border" /> veya
               <span className="h-px flex-1 bg-border" />
             </div>
-            <Button variant="outline" className="w-full" onClick={google}>
+            <Button variant="outline" size="lg" className="w-full" onClick={google}>
               Google ile devam et
             </Button>
-          </CardContent>
-        </Card>
-      </div>
+
+            <p className="mt-5 text-[11px] leading-relaxed text-muted-foreground">
+              Educational prototype — not an official GTech product. Tüm veriler kurgusaldır.
+            </p>
+          </div>
+        </section>
+
+        <section id="yetenekler" className="pt-8">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-brand-foreground">
+                Platform yetenekleri
+              </p>
+              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight">
+                Operasyon ekibinin komuta masası
+              </h2>
+            </div>
+            <p className="max-w-md text-sm text-muted-foreground">
+              Tespitten kapanışa kadar tek akış: triage, kök neden, aksiyon onayı, postmortem ve
+              bilgi kaydı — hepsi denetlenebilir.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((f) => (
+              <article
+                key={f.title}
+                className="panel group p-5 transition-colors hover:border-brand/40"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-brand/25 bg-brand-soft/40 text-brand transition-colors group-hover:bg-brand-soft/70">
+                  <f.icon className="h-5 w-5" aria-hidden />
+                </span>
+                <h3 className="mt-4 font-display text-base font-semibold">{f.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-16">
+          <div className="panel relative overflow-hidden p-8 text-center sm:p-12">
+            <div className="aurora opacity-70" aria-hidden />
+            <div className="relative">
+              <h2 className="font-display text-2xl font-semibold sm:text-3xl">
+                Incident zekâsını demo tenant üzerinde deneyin
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
+                Gerçekçi kurgusal veri seti, 15 incident, doğrulanmış runbook'lar ve tam denetim izi
+                hazır durumda.
+              </p>
+              <Button size="lg" className="mt-6" asChild>
+                <a href="#giris">
+                  Hemen başla <ArrowRight className="ml-1.5 h-4 w-4" aria-hidden />
+                </a>
+              </Button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="relative z-10 border-t border-border">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-8 text-xs text-muted-foreground lg:px-8">
+          <p>ResolveIQ · GTech Academy Concept Project</p>
+          <img src={logo.url} alt="GTech" className="h-7 w-auto opacity-70" />
+        </div>
+      </footer>
     </div>
   );
 }
