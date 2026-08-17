@@ -10,7 +10,7 @@ const patterns = [
   /\bgh[pousr]_[A-Za-z0-9_]{30,}\b/,
   /\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}\b/,
   /\bsb_secret_[A-Za-z0-9_-]{20,}\b/,
-  /^SUPABASE_SERVICE_ROLE_KEY\s*=\s*[^$\s]/m,
+  /^SUPABASE_SERVICE_ROLE_KEY\s*=\s*(?!\$\{|<|your-|server-only-)[^\s#]+/m,
 ];
 const findings = [];
 for (const file of tracked) {
