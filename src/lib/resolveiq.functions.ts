@@ -8,7 +8,10 @@ export const runTriage = createServerFn({ method: "POST" })
   .validator((data) =>
     z
       .object({
-        incidentId: z.string().uuid(),
+        // Demo/seed kayitlari RFC dis versiyon bitlerine sahip olabilir; bicim kontrolu yeterli.
+        incidentId: z
+          .string()
+          .regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/),
         failureMode: z.enum(["none", "timeout", "rate_limit"]).default("none"),
       })
       .parse(data),
