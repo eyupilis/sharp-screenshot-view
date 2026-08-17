@@ -11,3 +11,5 @@ src/routes/**/invoke-tool/**
 src/routes/**/list-tools.ts
 src/routes/**/oauth-protected-resource.ts
 src/routes/mcp.ts
+.lovable/mcp/manifest.json
+src/integrations/supabase/types.ts
