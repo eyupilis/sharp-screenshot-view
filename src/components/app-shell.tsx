@@ -11,7 +11,6 @@ import {
   ListChecks,
   LogOut,
   Repeat,
-  ShieldCheck,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMembership, ROLE_LABELS } from "@/lib/session";
