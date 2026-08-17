@@ -2,8 +2,11 @@ import type { ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Activity,
+  BadgeHelp,
   BookOpen,
   BarChart3,
+  Bot,
+  Settings,
   LayoutDashboard,
   ListChecks,
   LogOut,
@@ -21,8 +24,11 @@ const NAV = [
   { to: "/triage", label: "Triage Kuyruğu", icon: ListChecks },
   { to: "/olaylar", label: "Incident'lar", icon: Activity },
   { to: "/bilgi", label: "Bilgi Merkezi", icon: BookOpen },
+  { to: "/ai-kalitesi", label: "AI Kalitesi", icon: Bot },
   { to: "/problemler", label: "Tekrarlayan Desenler", icon: Repeat },
   { to: "/analitik", label: "Analitik", icon: BarChart3 },
+  { to: "/yonetim", label: "Yönetim", icon: Settings },
+  { to: "/yardim", label: "Yardım", icon: BadgeHelp },
 ] as const;
 
 export function AppShell({ userId, children }: { userId: string; children: ReactNode }) {
@@ -96,6 +102,27 @@ export function AppShell({ userId, children }: { userId: string; children: React
             </Button>
           </div>
         </header>
+        <nav
+          className="flex gap-1 overflow-x-auto border-b border-border bg-surface px-3 py-2 lg:hidden"
+          aria-label="Mobil gezinme"
+        >
+          {NAV.map((item) => {
+            const active = pathname.startsWith(item.to);
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={cn(
+                  "flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs",
+                  active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+                )}
+              >
+                <item.icon className="h-3.5 w-3.5" aria-hidden />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
         <main className="min-w-0 flex-1 p-4 lg:p-6">{children}</main>
       </div>
     </div>

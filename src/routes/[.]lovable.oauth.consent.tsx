@@ -4,12 +4,27 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+type OAuthAuthorizationDetails = {
+  client?: { name?: string };
+  redirect_url?: string;
+  redirect_to?: string;
+};
+
+type OAuthRedirectResult = {
+  redirect_url?: string;
+  redirect_to?: string;
+};
+
 type OAuthApi = {
   getAuthorizationDetails: (
     id: string,
-  ) => Promise<{ data: any; error: { message: string } | null }>;
-  approveAuthorization: (id: string) => Promise<{ data: any; error: { message: string } | null }>;
-  denyAuthorization: (id: string) => Promise<{ data: any; error: { message: string } | null }>;
+  ) => Promise<{ data: OAuthAuthorizationDetails | null; error: { message: string } | null }>;
+  approveAuthorization: (
+    id: string,
+  ) => Promise<{ data: OAuthRedirectResult | null; error: { message: string } | null }>;
+  denyAuthorization: (
+    id: string,
+  ) => Promise<{ data: OAuthRedirectResult | null; error: { message: string } | null }>;
 };
 
 function oauthApi(): OAuthApi {
@@ -25,7 +40,9 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
     if (!search.authorization_id) throw new Error("Missing authorization_id");
     const { data } = await supabase.auth.getSession();
     if (!data.session) {
-      throw redirect({ href: `/?next=${encodeURIComponent(location.pathname + location.searchStr)}` });
+      throw redirect({
+        href: `/?next=${encodeURIComponent(location.pathname + location.searchStr)}`,
+      });
     }
   },
   loader: async ({ location }) => {
@@ -45,7 +62,7 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
 });
 
 function Consent() {
-  const details = Route.useLoaderData() as any;
+  const details = Route.useLoaderData();
   const { authorization_id } = Route.useSearch();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,8 +95,9 @@ function Consent() {
         <CardHeader>
           <CardTitle>{clientName} bağlantısına izin ver</CardTitle>
           <CardDescription>
-            Bu izin, {clientName} uygulamasının ResolveIQ'yu sizin adınıza kullanmasına — tenant'ınızdaki
-            incident ve bilgi kayıtlarını okumasına ve yeni incident açmasına — olanak tanır.
+            Bu izin, {clientName} uygulamasının ResolveIQ'yu sizin adınıza kullanmasına —
+            tenant'ınızdaki incident ve bilgi kayıtlarını okumasına ve yeni incident açmasına —
+            olanak tanır.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

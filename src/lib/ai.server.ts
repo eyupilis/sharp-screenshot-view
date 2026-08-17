@@ -1,8 +1,34 @@
 /** Server-only helpers: lexical retrieval + Lovable AI Gateway calls. */
 
 const STOPWORDS = new Set([
-  "ve","ile","bir","bu","da","de","icin","için","olarak","olan","var","yok","sonra","once","önce",
-  "the","and","for","with","that","this","from","was","were","are","not","has","have",
+  "ve",
+  "ile",
+  "bir",
+  "bu",
+  "da",
+  "de",
+  "icin",
+  "için",
+  "olarak",
+  "olan",
+  "var",
+  "yok",
+  "sonra",
+  "once",
+  "önce",
+  "the",
+  "and",
+  "for",
+  "with",
+  "that",
+  "this",
+  "from",
+  "was",
+  "were",
+  "are",
+  "not",
+  "has",
+  "have",
 ]);
 
 export function tokenize(text: string): string[] {
@@ -68,15 +94,39 @@ export type AiCallResult = {
   error?: string;
 };
 
-export async function callGateway(systemPrompt: string, userPrompt: string): Promise<AiCallResult> {
+export type AiFailureMode = "none" | "timeout" | "rate_limit";
+
+export async function callGateway(
+  systemPrompt: string,
+  userPrompt: string,
+  failureMode: AiFailureMode = "none",
+): Promise<AiCallResult> {
   const apiKey = process.env["LOVABLE_API_KEY"];
   const started = Date.now();
-  if (!apiKey) {
-    return { mode: "fallback", model: null, content: null, latencyMs: 0, error: "LOVABLE_API_KEY yok" };
+  if (failureMode !== "none") {
+    return {
+      mode: "fallback",
+      model: null,
+      content: null,
+      latencyMs: 1,
+      error: failureMode === "timeout" ? "AI zaman aşımı (demo)" : "AI hız sınırı (demo)",
+    };
   }
+  if (!apiKey) {
+    return {
+      mode: "fallback",
+      model: null,
+      content: null,
+      latencyMs: 0,
+      error: "LOVABLE_API_KEY yok",
+    };
+  }
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15_000);
   try {
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
+      signal: controller.signal,
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "google/gemini-3.5-flash",
@@ -88,8 +138,7 @@ export async function callGateway(systemPrompt: string, userPrompt: string): Pro
       }),
     });
     if (!response.ok) {
-      const body = await response.text();
-      console.error(`AI gateway failed [${response.status}]: ${body}`);
+      console.error(`AI gateway failed [${response.status}]`);
       return {
         mode: "fallback",
         model: null,
@@ -109,14 +158,17 @@ export async function callGateway(systemPrompt: string, userPrompt: string): Pro
       latencyMs: Date.now() - started,
     };
   } catch (error) {
-    console.error("AI gateway error", error);
+    const timedOut = error instanceof Error && error.name === "AbortError";
+    console.error(`AI gateway ${timedOut ? "timed out" : "request failed"}`);
     return {
       mode: "fallback",
       model: null,
       content: null,
       latencyMs: Date.now() - started,
-      error: "AI servisine ulaşılamadı",
+      error: timedOut ? "AI zaman aşımı" : "AI servisine ulaşılamadı",
     };
+  } finally {
+    clearTimeout(timeout);
   }
 }
 

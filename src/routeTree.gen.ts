@@ -14,16 +14,21 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AppAiKalitesiRouteImport } from './routes/_app/ai-kalitesi'
 import { Route as AppAnalitikRouteImport } from './routes/_app/analitik'
 import { Route as AppBilgiRouteImport } from './routes/_app/bilgi'
+import { Route as AppDesignSystemRouteImport } from './routes/_app/design-system'
 import { Route as AppKomutaRouteImport } from './routes/_app/komuta'
 import { Route as AppProblemlerRouteImport } from './routes/_app/problemler'
 import { Route as AppTriageRouteImport } from './routes/_app/triage'
+import { Route as AppYardimRouteImport } from './routes/_app/yardim'
+import { Route as AppYonetimRouteImport } from './routes/_app/yonetim'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AppOlaylarIndexRouteImport } from './routes/_app/olaylar.index'
 import { Route as AppOlaylarIdRouteImport } from './routes/_app/olaylar.$id'
 import { Route as AppOlaylarYeniRouteImport } from './routes/_app/olaylar.yeni'
+import { Route as ApiWebhooksIncidentsRouteImport } from './routes/api.webhooks.incidents'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -51,6 +56,11 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
     path: '/.well-known/oauth-protected-resource',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AppAiKalitesiRoute = AppAiKalitesiRouteImport.update({
+  id: '/ai-kalitesi',
+  path: '/ai-kalitesi',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAnalitikRoute = AppAnalitikRouteImport.update({
   id: '/analitik',
   path: '/analitik',
@@ -59,6 +69,11 @@ const AppAnalitikRoute = AppAnalitikRouteImport.update({
 const AppBilgiRoute = AppBilgiRouteImport.update({
   id: '/bilgi',
   path: '/bilgi',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDesignSystemRoute = AppDesignSystemRouteImport.update({
+  id: '/design-system',
+  path: '/design-system',
   getParentRoute: () => AppRoute,
 } as any)
 const AppKomutaRoute = AppKomutaRouteImport.update({
@@ -74,6 +89,16 @@ const AppProblemlerRoute = AppProblemlerRouteImport.update({
 const AppTriageRoute = AppTriageRouteImport.update({
   id: '/triage',
   path: '/triage',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppYardimRoute = AppYardimRouteImport.update({
+  id: '/yardim',
+  path: '/yardim',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppYonetimRoute = AppYonetimRouteImport.update({
+  id: '/yonetim',
+  path: '/yonetim',
   getParentRoute: () => AppRoute,
 } as any)
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
@@ -102,21 +127,31 @@ const AppOlaylarYeniRoute = AppOlaylarYeniRouteImport.update({
   path: '/olaylar/yeni',
   getParentRoute: () => AppRoute,
 } as any)
+const ApiWebhooksIncidentsRoute = ApiWebhooksIncidentsRouteImport.update({
+  id: '/api/webhooks/incidents',
+  path: '/api/webhooks/incidents',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/ai-kalitesi': typeof AppAiKalitesiRoute
   '/analitik': typeof AppAnalitikRoute
   '/bilgi': typeof AppBilgiRoute
+  '/design-system': typeof AppDesignSystemRoute
   '/komuta': typeof AppKomutaRoute
   '/problemler': typeof AppProblemlerRoute
   '/triage': typeof AppTriageRoute
+  '/yardim': typeof AppYardimRoute
+  '/yonetim': typeof AppYonetimRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/olaylar/$id': typeof AppOlaylarIdRoute
   '/olaylar/yeni': typeof AppOlaylarYeniRoute
+  '/api/webhooks/incidents': typeof ApiWebhooksIncidentsRoute
   '/olaylar/': typeof AppOlaylarIndexRoute
 }
 export interface FileRoutesByTo {
@@ -124,15 +159,20 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/ai-kalitesi': typeof AppAiKalitesiRoute
   '/analitik': typeof AppAnalitikRoute
   '/bilgi': typeof AppBilgiRoute
+  '/design-system': typeof AppDesignSystemRoute
   '/komuta': typeof AppKomutaRoute
   '/problemler': typeof AppProblemlerRoute
   '/triage': typeof AppTriageRoute
+  '/yardim': typeof AppYardimRoute
+  '/yonetim': typeof AppYonetimRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/olaylar/$id': typeof AppOlaylarIdRoute
   '/olaylar/yeni': typeof AppOlaylarYeniRoute
+  '/api/webhooks/incidents': typeof ApiWebhooksIncidentsRoute
   '/olaylar': typeof AppOlaylarIndexRoute
 }
 export interface FileRoutesById {
@@ -142,15 +182,20 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/_app/ai-kalitesi': typeof AppAiKalitesiRoute
   '/_app/analitik': typeof AppAnalitikRoute
   '/_app/bilgi': typeof AppBilgiRoute
+  '/_app/design-system': typeof AppDesignSystemRoute
   '/_app/komuta': typeof AppKomutaRoute
   '/_app/problemler': typeof AppProblemlerRoute
   '/_app/triage': typeof AppTriageRoute
+  '/_app/yardim': typeof AppYardimRoute
+  '/_app/yonetim': typeof AppYonetimRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_app/olaylar/$id': typeof AppOlaylarIdRoute
   '/_app/olaylar/yeni': typeof AppOlaylarYeniRoute
+  '/api/webhooks/incidents': typeof ApiWebhooksIncidentsRoute
   '/_app/olaylar/': typeof AppOlaylarIndexRoute
 }
 export interface FileRouteTypes {
@@ -160,15 +205,20 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/ai-kalitesi'
     | '/analitik'
     | '/bilgi'
+    | '/design-system'
     | '/komuta'
     | '/problemler'
     | '/triage'
+    | '/yardim'
+    | '/yonetim'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/olaylar/$id'
     | '/olaylar/yeni'
+    | '/api/webhooks/incidents'
     | '/olaylar/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -176,15 +226,20 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/ai-kalitesi'
     | '/analitik'
     | '/bilgi'
+    | '/design-system'
     | '/komuta'
     | '/problemler'
     | '/triage'
+    | '/yardim'
+    | '/yonetim'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/olaylar/$id'
     | '/olaylar/yeni'
+    | '/api/webhooks/incidents'
     | '/olaylar'
   id:
     | '__root__'
@@ -193,15 +248,20 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/_app/ai-kalitesi'
     | '/_app/analitik'
     | '/_app/bilgi'
+    | '/_app/design-system'
     | '/_app/komuta'
     | '/_app/problemler'
     | '/_app/triage'
+    | '/_app/yardim'
+    | '/_app/yonetim'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_app/olaylar/$id'
     | '/_app/olaylar/yeni'
+    | '/api/webhooks/incidents'
     | '/_app/olaylar/'
   fileRoutesById: FileRoutesById
 }
@@ -213,6 +273,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiWebhooksIncidentsRoute: typeof ApiWebhooksIncidentsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -252,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/ai-kalitesi': {
+      id: '/_app/ai-kalitesi'
+      path: '/ai-kalitesi'
+      fullPath: '/ai-kalitesi'
+      preLoaderRoute: typeof AppAiKalitesiRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/analitik': {
       id: '/_app/analitik'
       path: '/analitik'
@@ -264,6 +332,13 @@ declare module '@tanstack/react-router' {
       path: '/bilgi'
       fullPath: '/bilgi'
       preLoaderRoute: typeof AppBilgiRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/design-system': {
+      id: '/_app/design-system'
+      path: '/design-system'
+      fullPath: '/design-system'
+      preLoaderRoute: typeof AppDesignSystemRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/komuta': {
@@ -285,6 +360,20 @@ declare module '@tanstack/react-router' {
       path: '/triage'
       fullPath: '/triage'
       preLoaderRoute: typeof AppTriageRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/yardim': {
+      id: '/_app/yardim'
+      path: '/yardim'
+      fullPath: '/yardim'
+      preLoaderRoute: typeof AppYardimRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/yonetim': {
+      id: '/_app/yonetim'
+      path: '/yonetim'
+      fullPath: '/yonetim'
+      preLoaderRoute: typeof AppYonetimRouteImport
       parentRoute: typeof AppRoute
     }
     '/.lovable/oauth/consent': {
@@ -322,26 +411,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOlaylarYeniRouteImport
       parentRoute: typeof AppRoute
     }
+    '/api/webhooks/incidents': {
+      id: '/api/webhooks/incidents'
+      path: '/api/webhooks/incidents'
+      fullPath: '/api/webhooks/incidents'
+      preLoaderRoute: typeof ApiWebhooksIncidentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAiKalitesiRoute: typeof AppAiKalitesiRoute
   AppAnalitikRoute: typeof AppAnalitikRoute
   AppBilgiRoute: typeof AppBilgiRoute
+  AppDesignSystemRoute: typeof AppDesignSystemRoute
   AppKomutaRoute: typeof AppKomutaRoute
   AppProblemlerRoute: typeof AppProblemlerRoute
   AppTriageRoute: typeof AppTriageRoute
+  AppYardimRoute: typeof AppYardimRoute
+  AppYonetimRoute: typeof AppYonetimRoute
   AppOlaylarIdRoute: typeof AppOlaylarIdRoute
   AppOlaylarYeniRoute: typeof AppOlaylarYeniRoute
   AppOlaylarIndexRoute: typeof AppOlaylarIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAiKalitesiRoute: AppAiKalitesiRoute,
   AppAnalitikRoute: AppAnalitikRoute,
   AppBilgiRoute: AppBilgiRoute,
+  AppDesignSystemRoute: AppDesignSystemRoute,
   AppKomutaRoute: AppKomutaRoute,
   AppProblemlerRoute: AppProblemlerRoute,
   AppTriageRoute: AppTriageRoute,
+  AppYardimRoute: AppYardimRoute,
+  AppYonetimRoute: AppYonetimRoute,
   AppOlaylarIdRoute: AppOlaylarIdRoute,
   AppOlaylarYeniRoute: AppOlaylarYeniRoute,
   AppOlaylarIndexRoute: AppOlaylarIndexRoute,
@@ -358,6 +462,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiWebhooksIncidentsRoute: ApiWebhooksIncidentsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

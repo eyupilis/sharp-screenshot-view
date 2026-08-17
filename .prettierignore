@@ -2,7 +2,12 @@ node_modules
 dist
 .output
 .vinxi
+.npm-cache
 pnpm-lock.yaml
 package-lock.json
 bun.lock
 routeTree.gen.ts
+src/routes/**/invoke-tool/**
+src/routes/**/list-tools.ts
+src/routes/**/oauth-protected-resource.ts
+src/routes/mcp.ts

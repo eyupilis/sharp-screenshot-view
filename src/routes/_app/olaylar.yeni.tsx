@@ -23,9 +23,16 @@ export const Route = createFileRoute("/_app/olaylar/yeni")({
   head: () => ({
     meta: [
       { title: "Yeni Incident — ResolveIQ" },
-      { name: "description", content: "Finansal sistemlerde tespit edilen yeni bir olayı yapılandırılmış biçimde bildirin." },
+      {
+        name: "description",
+        content:
+          "Finansal sistemlerde tespit edilen yeni bir olayı yapılandırılmış biçimde bildirin.",
+      },
       { property: "og:title", content: "Yeni Incident — ResolveIQ" },
-      { property: "og:description", content: "Yeni bir finansal olayı yapılandırılmış biçimde bildirin." },
+      {
+        property: "og:description",
+        content: "Yeni bir finansal olayı yapılandırılmış biçimde bildirin.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

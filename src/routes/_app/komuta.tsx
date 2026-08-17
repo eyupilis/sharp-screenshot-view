@@ -11,9 +11,15 @@ export const Route = createFileRoute("/_app/komuta")({
   head: () => ({
     meta: [
       { title: "Komuta Merkezi — ResolveIQ" },
-      { name: "description", content: "Açık finansal incident'ların canlı durumu, severity dağılımı ve triage kuyruğu." },
+      {
+        name: "description",
+        content: "Açık finansal incident'ların canlı durumu, severity dağılımı ve triage kuyruğu.",
+      },
       { property: "og:title", content: "Komuta Merkezi — ResolveIQ" },
-      { property: "og:description", content: "Açık incident'ların canlı durumu ve triage kuyruğu." },
+      {
+        property: "og:description",
+        content: "Açık incident'ların canlı durumu ve triage kuyruğu.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -33,11 +39,16 @@ function CommandCenter() {
       const [incidents, systems, runs] = await Promise.all([
         supabase
           .from("incidents")
-          .select("id, reference, title, status, approved_severity, ai_suggested_severity, reported_severity, detected_at, system_id")
+          .select(
+            "id, reference, title, status, approved_severity, ai_suggested_severity, reported_severity, detected_at, system_id",
+          )
           .eq("organization_id", org!)
           .order("detected_at", { ascending: false })
           .limit(60),
-        supabase.from("financial_systems").select("id, name, code, criticality").eq("organization_id", org!),
+        supabase
+          .from("financial_systems")
+          .select("id, name, code, criticality")
+          .eq("organization_id", org!),
         supabase
           .from("ai_runs")
           .select("id, mode, status, created_at, run_type")
@@ -58,7 +69,9 @@ function CommandCenter() {
   const sev = (i: (typeof incidents)[number]) =>
     i.approved_severity ?? i.ai_suggested_severity ?? i.reported_severity;
   const p1 = openIncidents.filter((i) => sev(i) === "P1").length;
-  const awaitingTriage = openIncidents.filter((i) => ["new", "triage_pending"].includes(i.status)).length;
+  const awaitingTriage = openIncidents.filter((i) =>
+    ["new", "triage_pending"].includes(i.status),
+  ).length;
   const systemName = (id: string | null) =>
     data?.systems.find((s) => s.id === id)?.name ?? "Sistem atanmamış";
 

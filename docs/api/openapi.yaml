@@ -1,0 +1,48 @@
+openapi: 3.1.0
+info:
+  title: ResolveIQ Incident Webhook
+  version: 1.0.0
+  description: Signed, idempotent ingestion endpoint for external incident sources.
+paths:
+  /api/webhooks/incidents:
+    post:
+      operationId: ingestIncident
+      security:
+        - webhookSecret: []
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema: { type: string, maxLength: 160 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentInput"
+      responses:
+        "202": { description: Accepted }
+        "200": { description: Duplicate request; existing incident returned }
+        "400": { description: Invalid JSON or missing idempotency key }
+        "401": { description: Invalid or missing secret }
+        "413": { description: Payload exceeds 256 KB }
+        "422": { description: Schema validation failed }
+components:
+  securitySchemes:
+    webhookSecret:
+      type: apiKey
+      in: header
+      name: X-ResolveIQ-Secret
+  schemas:
+    IncidentInput:
+      type: object
+      additionalProperties: false
+      required: [organizationSlug, sourceReference, title, description]
+      properties:
+        organizationSlug: { type: string, minLength: 2, maxLength: 80 }
+        sourceReference: { type: string, minLength: 1, maxLength: 120 }
+        title: { type: string, minLength: 5, maxLength: 240 }
+        description: { type: string, minLength: 10, maxLength: 8000 }
+        severity: { type: string, enum: [P1, P2, P3, P4], default: P3 }
+        environment: { type: string, enum: [prod, production, staging, test], default: prod }
+        systemCode: { type: string, maxLength: 40 }

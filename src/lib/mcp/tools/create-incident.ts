@@ -9,12 +9,19 @@ export default defineTool({
   inputSchema: {
     title: z.string().trim().min(3).describe("Short incident title."),
     description: z.string().trim().min(10).describe("What is happening, impact and symptoms."),
-    environment: z.enum(["prod", "staging", "test"]).default("prod").describe("Affected environment."),
+    environment: z
+      .enum(["prod", "staging", "test"])
+      .default("prod")
+      .describe("Affected environment."),
     reported_severity: z
       .enum(["P1", "P2", "P3", "P4"])
       .optional()
       .describe("Severity reported by the human."),
-    category: z.string().trim().optional().describe("Optional category, e.g. payment, card, core-banking."),
+    category: z
+      .string()
+      .trim()
+      .optional()
+      .describe("Optional category, e.g. payment, card, core-banking."),
   },
   outputSchema: { incident: z.record(z.string(), z.unknown()) },
   annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },

@@ -96,9 +96,21 @@ export function statusToneClass(status?: string | null) {
 }
 
 export function confidenceLabel(value: number) {
-  if (value >= 0.7) return "Yüksek kanıt güveni";
-  if (value >= 0.4) return "Orta kanıt güveni";
-  return "Düşük kanıt güveni";
+  if (value >= 0.9) return "Çok yüksek güven · doğrudan kanıt";
+  if (value >= 0.8) return "Yüksek güven · insan onayı gerekli";
+  if (value >= 0.65) return "Orta güven · ek doğrulama gerekli";
+  return "Düşük güven · öneri üretilemez";
+}
+
+export function confidenceBand(value: number) {
+  if (value >= 0.9) return "very_high" as const;
+  if (value >= 0.8) return "high" as const;
+  if (value >= 0.65) return "medium" as const;
+  return "insufficient" as const;
+}
+
+export function shouldGenerateActions(evidenceConfidence: number) {
+  return evidenceConfidence >= 0.65;
 }
 
 export const DISCLAIMER = "AI önerisi henüz operasyonel karar değildir.";

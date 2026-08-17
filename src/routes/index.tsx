@@ -118,8 +118,8 @@ function Landing() {
           </h1>
           <p className="mt-4 max-w-xl text-muted-foreground">
             ResolveIQ; kart, ödeme, mutabakat ve çekirdek bankacılık sistemlerinde yaşanan
-            incident'ları sınıflandırır, kök neden hipotezleri üretir ve her öneriyi kurum
-            içi doğrulanmış bilgi kayıtlarına dayandırır. Kararı her zaman insan verir.
+            incident'ları sınıflandırır, kök neden hipotezleri üretir ve her öneriyi kurum içi
+            doğrulanmış bilgi kayıtlarına dayandırır. Kararı her zaman insan verir.
           </p>
           <ul className="mt-8 space-y-4">
             {[
@@ -168,7 +168,13 @@ function Landing() {
                 <form className="space-y-3" onSubmit={signIn}>
                   <div className="space-y-1.5">
                     <Label htmlFor="email">E-posta</Label>
-                    <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <Input
+                      id="email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="password">Parola</Label>
@@ -189,11 +195,21 @@ function Landing() {
                 <form className="space-y-3" onSubmit={signUp}>
                   <div className="space-y-1.5">
                     <Label htmlFor="name">Ad soyad</Label>
-                    <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                    <Input
+                      id="name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="email2">E-posta</Label>
-                    <Input id="email2" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <Input
+                      id="email2"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="password2">Parola</Label>
@@ -213,7 +229,8 @@ function Landing() {
               </TabsContent>
             </Tabs>
             <div className="my-4 flex items-center gap-3 text-[11px] text-muted-foreground">
-              <span className="h-px flex-1 bg-border" /> veya <span className="h-px flex-1 bg-border" />
+              <span className="h-px flex-1 bg-border" /> veya{" "}
+              <span className="h-px flex-1 bg-border" />
             </div>
             <Button variant="outline" className="w-full" onClick={google}>
               Google ile devam et

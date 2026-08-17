@@ -5,7 +5,14 @@ import { runTriagePipeline } from "./triage.server";
 
 export const runTriage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data) => z.object({ incidentId: z.string().uuid() }).parse(data))
+  .validator((data) =>
+    z
+      .object({
+        incidentId: z.string().uuid(),
+        failureMode: z.enum(["none", "timeout", "rate_limit"]).default("none"),
+      })
+      .parse(data),
+  )
   .handler(async ({ data, context }) => {
-    return runTriagePipeline(context.supabase, context.userId, data.incidentId);
+    return runTriagePipeline(context.supabase, context.userId, data.incidentId, data.failureMode);
   });

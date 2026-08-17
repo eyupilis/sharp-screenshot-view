@@ -14,7 +14,10 @@ export const Route = createFileRoute("/_app/olaylar/")({
   head: () => ({
     meta: [
       { title: "Incident'lar — ResolveIQ" },
-      { name: "description", content: "Tüm finansal incident kayıtlarını arayın, filtreleyin ve durumlarını izleyin." },
+      {
+        name: "description",
+        content: "Tüm finansal incident kayıtlarını arayın, filtreleyin ve durumlarını izleyin.",
+      },
       { property: "og:title", content: "Incident'lar — ResolveIQ" },
       { property: "og:description", content: "Finansal incident kayıtlarını arayın ve izleyin." },
       { property: "og:type", content: "website" },
@@ -45,7 +48,9 @@ function IncidentList() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("incidents")
-        .select("id, reference, title, description, status, approved_severity, ai_suggested_severity, reported_severity, detected_at")
+        .select(
+          "id, reference, title, description, status, approved_severity, ai_suggested_severity, reported_severity, detected_at",
+        )
         .eq("organization_id", org!)
         .order("detected_at", { ascending: false });
       if (error) throw error;

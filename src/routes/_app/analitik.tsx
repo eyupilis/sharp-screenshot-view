@@ -10,9 +10,16 @@ export const Route = createFileRoute("/_app/analitik")({
   head: () => ({
     meta: [
       { title: "Analitik — ResolveIQ" },
-      { name: "description", content: "Severity dağılımı, AI kabul oranı, bilgi yeniden kullanımı ve denetim izi özetleri." },
+      {
+        name: "description",
+        content:
+          "Severity dağılımı, AI kabul oranı, bilgi yeniden kullanımı ve denetim izi özetleri.",
+      },
       { property: "og:title", content: "Analitik — ResolveIQ" },
-      { property: "og:description", content: "Severity dağılımı, AI kabul oranı ve bilgi yeniden kullanımı." },
+      {
+        property: "og:description",
+        content: "Severity dağılımı, AI kabul oranı ve bilgi yeniden kullanımı.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -32,7 +39,9 @@ function Analytics() {
       const [incidents, actions, runs, audits] = await Promise.all([
         supabase
           .from("incidents")
-          .select("id, status, approved_severity, ai_suggested_severity, reported_severity, knowledge_promoted")
+          .select(
+            "id, status, approved_severity, ai_suggested_severity, reported_severity, knowledge_promoted, detected_at, acknowledged_at, resolved_at",
+          )
           .eq("organization_id", org!),
         supabase.from("recommended_actions").select("decision").eq("organization_id", org!),
         supabase.from("ai_runs").select("mode, status").eq("organization_id", org!),
@@ -61,6 +70,24 @@ function Analytics() {
   const approved = decided.filter((a) => a.decision === "approved");
   const acceptanceRate = decided.length ? Math.round((approved.length / decided.length) * 100) : 0;
   const liveRuns = (data?.runs ?? []).filter((r) => r.mode === "live").length;
+  const mttaSamples = incidents
+    .filter((incident) => incident.acknowledged_at)
+    .map(
+      (incident) =>
+        (new Date(incident.acknowledged_at!).getTime() - new Date(incident.detected_at).getTime()) /
+        60_000,
+    );
+  const mttrSamples = incidents
+    .filter((incident) => incident.resolved_at)
+    .map(
+      (incident) =>
+        (new Date(incident.resolved_at!).getTime() - new Date(incident.detected_at).getTime()) /
+        60_000,
+    );
+  const average = (values: number[]) =>
+    values.length
+      ? Math.round(values.reduce((total, value) => total + value, 0) / values.length)
+      : 0;
 
   const cards = [
     { label: "Toplam incident", value: incidents.length },
@@ -70,6 +97,8 @@ function Analytics() {
       label: "Bilgiye dönüşen olay",
       value: incidents.filter((i) => i.knowledge_promoted).length,
     },
+    { label: "MTTA", value: `${average(mttaSamples)} dk` },
+    { label: "MTTR", value: `${average(mttrSamples)} dk` },
   ];
 
   const maxSev = Math.max(1, ...(["P1", "P2", "P3", "P4"] as Severity[]).map(sevCount));
@@ -80,7 +109,7 @@ function Analytics() {
         title="Analitik ve denetim"
         description="Operasyonel etki, AI güvenilirliği ve karar izlenebilirliği."
       />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {cards.map((c) => (
           <Card key={c.label}>
             <CardContent className="pt-6">

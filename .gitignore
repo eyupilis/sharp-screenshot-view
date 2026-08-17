@@ -8,6 +8,8 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.npm-cache
+coverage
 dist
 dist-ssr
 .output
@@ -15,6 +17,10 @@ dist-ssr
 .tanstack/**
 .nitro
 *.local
+.env
+.env.*
+!.env.example
+MEMORY.md
 
 # Wrangler / Cloudflare
 .wrangler/

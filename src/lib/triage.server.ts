@@ -1,6 +1,17 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { callGateway, lexicalRank, normalizeScore, parseJsonBlock, type Candidate } from "./ai.server";
+import {
+  callGateway,
+  lexicalRank,
+  normalizeScore,
+  parseJsonBlock,
+  type Candidate,
+  type AiFailureMode,
+} from "./ai.server";
+import { inferCategory, inferSeverity } from "./triage-rules";
+import { shouldGenerateActions } from "./domain";
+import { TRIAGE_SYSTEM_PROMPT } from "@/prompts/triage";
+import { z } from "zod";
 
 type Client = SupabaseClient<Database>;
 
@@ -32,54 +43,84 @@ export type TriageOutput = {
   evidence: EvidenceItem[];
 };
 
-const SYSTEM_PROMPT = `Sen finansal sistemler için kurumsal bir incident triage asistanısın.
-Sadece sana verilen kanıtlara dayan. Kanıt yoksa bunu açıkça söyle ve düşük güven ver.
-Asla durum değişikliği uygulama, sadece öneri üret. Türkçe yaz.
-Yanıtı yalnızca şu JSON şemasıyla ver:
-{"category":"performance|integration|availability|data_integrity|security|other",
- "suggested_severity":"P1|P2|P3|P4",
- "missing_information":["..."],
- "evidence_confidence":0.0,
- "summary":"...",
- "hypotheses":[{"hypothesis":"...","rationale":"...","confidence":0.0}],
- "actions":[{"title":"...","detail":"...","risk_level":"low|medium|high","confidence":0.0}]}`;
+const TriageResponseSchema = z.object({
+  category: z.enum([
+    "performance",
+    "integration",
+    "availability",
+    "data_integrity",
+    "security",
+    "other",
+  ]),
+  suggested_severity: z.enum(["P1", "P2", "P3", "P4"]),
+  missing_information: z.array(z.string().max(180)).max(8),
+  evidence_confidence: z.number().min(0).max(1),
+  summary: z.string().min(1).max(1200),
+  hypotheses: z
+    .array(
+      z.object({
+        hypothesis: z.string().min(1).max(500),
+        rationale: z.string().min(1).max(1000),
+        confidence: z.number().min(0).max(1),
+      }),
+    )
+    .max(3),
+  actions: z
+    .array(
+      z.object({
+        title: z.string().min(1).max(240),
+        detail: z.string().min(1).max(1200),
+        risk_level: z.enum(["low", "medium", "high"]),
+        confidence: z.number().min(0).max(1),
+      }),
+    )
+    .max(4),
+});
 
-function deterministicTriage(text: string, evidenceCount: number): TriageOutput["triage"] {
-  const lower = text.toLocaleLowerCase("tr");
-  const category = /zaman aşımı|timeout|yavaş|gecikme|yanıt sür/.test(lower)
-    ? "performance"
-    : /sertifika|entegrasyon|format|api|servis çağrı/.test(lower)
-      ? "integration"
-      : /mutabakat|dosya|eksik satır|tutarsız/.test(lower)
-        ? "data_integrity"
-        : /erişilemiyor|kesinti|bos ekran|boş ekran|çalışmıyor/.test(lower)
-          ? "availability"
-          : "other";
-  const severity = /kritik|tüm müşteriler|kesinti|p1|ödeme alınamıyor/.test(lower)
-    ? "P1"
-    : /artış|hata oranı|kısmi|yavaş/.test(lower)
-      ? "P2"
-      : "P3";
+function deterministicTriage(text: string, evidenceConfidence: number): TriageOutput["triage"] {
+  const category = inferCategory(text);
+  const severity = inferSeverity(text);
   return {
     category,
-    suggestedSeverity: severity as "P1" | "P2" | "P3",
-    missingInformation: ["Etkilenen işlem hacmi", "Son değişiklik kaydı"],
-    evidenceConfidence: evidenceCount > 0 ? 0.45 : 0.15,
+    suggestedSeverity: severity,
+    missingInformation:
+      evidenceConfidence >= 0.65
+        ? ["Etkilenen işlem hacmi", "Son değişiklik kaydı"]
+        : ["Doğrulanmış benzer kayıt", "Hata kodu ve zaman aralığı", "Etkilenen işlem hacmi"],
+    evidenceConfidence,
     summary:
-      evidenceCount > 0
-        ? "Deterministik demo modunda üretilmiş triage. Kural tabanlı sınıflandırma ve tenant kanıtları kullanıldı."
+      evidenceConfidence >= 0.65
+        ? "Deterministik güvenli modda üretilmiş triage. Kural tabanlı sınıflandırma ve tenant kanıtları kullanıldı."
         : "Yeterli doğrulanmış kanıt bulunamadı. Manuel inceleme gerekli.",
   };
+}
+
+function calibratedEvidenceConfidence(
+  query: string,
+  ranked: Array<{ matchedTerms: string[]; score: number }>,
+) {
+  if (ranked.length === 0) return 0.18;
+  const queryTermCount = Math.max(new Set(query.toLocaleLowerCase("tr").split(/\s+/)).size, 1);
+  const uniqueMatches = new Set(ranked.flatMap((item) => item.matchedTerms)).size;
+  const coverage = uniqueMatches / Math.min(queryTermCount, 12);
+  const corroboration = Math.min(ranked.length / 4, 1);
+  const rawStrength = Math.min((ranked[0]?.score ?? 0) / 0.45, 1);
+  return Number(
+    Math.min(0.94, 0.28 + coverage * 0.38 + corroboration * 0.18 + rawStrength * 0.1).toFixed(2),
+  );
 }
 
 export async function runTriagePipeline(
   supabase: Client,
   userId: string,
   incidentId: string,
+  failureMode: AiFailureMode = "none",
 ): Promise<TriageOutput> {
   const { data: incident, error } = await supabase
     .from("incidents")
-    .select("id, organization_id, reference, title, description, system_id, environment, reported_severity")
+    .select(
+      "id, organization_id, reference, title, description, system_id, environment, reported_severity",
+    )
     .eq("id", incidentId)
     .maybeSingle();
   if (error) throw new Error(`Incident okunamadı: ${error.message}`);
@@ -87,18 +128,53 @@ export async function runTriagePipeline(
 
   const org = incident.organization_id;
   const query = `${incident.title} ${incident.description}`;
+  let effectiveFailureMode = failureMode;
+  if (failureMode !== "none") {
+    const [organization, memberships] = await Promise.all([
+      supabase.from("organizations").select("is_demo").eq("id", org).maybeSingle(),
+      supabase
+        .from("organization_memberships")
+        .select("role")
+        .eq("organization_id", org)
+        .eq("user_id", userId),
+    ]);
+    const canSimulate =
+      organization.data?.is_demo === true &&
+      (memberships.data ?? []).some((membership) =>
+        ["manager", "tenant_admin", "platform_admin"].includes(membership.role),
+      );
+    if (!canSimulate) effectiveFailureMode = "none";
+  }
 
   // Retrieval: only verified / approved knowledge, deprecated excluded.
-  const { data: chunks } = await supabase
-    .from("knowledge_chunks")
-    .select("id, content, article_id, knowledge_articles!inner(id, title, status, freshness, visibility)")
-    .eq("organization_id", org)
-    .limit(500);
+  const [tenantChunks, sharedChunks] = await Promise.all([
+    supabase
+      .from("knowledge_chunks")
+      .select(
+        "id, content, article_id, knowledge_articles!inner(id, title, status, freshness, visibility)",
+      )
+      .eq("organization_id", org)
+      .limit(500),
+    supabase
+      .from("knowledge_chunks")
+      .select(
+        "id, content, article_id, knowledge_articles!inner(id, title, status, freshness, visibility)",
+      )
+      .neq("organization_id", org)
+      .eq("knowledge_articles.visibility", "shared")
+      .eq("knowledge_articles.status", "approved_shared")
+      .limit(200),
+  ]);
 
-  const knowledgeCandidates: Candidate[] = (chunks ?? [])
+  const chunks = [...(tenantChunks.data ?? []), ...(sharedChunks.data ?? [])];
+
+  const knowledgeCandidates: Candidate[] = chunks
     .filter((c) => {
-      const article = c.knowledge_articles as unknown as { status: string };
-      return ["approved_private", "approved_shared", "needs_review", "stale"].includes(article.status);
+      const article = c.knowledge_articles as unknown as { status: string; freshness: string };
+      return (
+        ["approved_private", "approved_shared"].includes(article.status) &&
+        article.freshness === "valid"
+      );
     })
     .map((c) => ({
       id: c.article_id,
@@ -122,11 +198,11 @@ export async function runTriagePipeline(
 
   const rankedKnowledge = lexicalRank(query, knowledgeCandidates, 4);
   const rankedIncidents = lexicalRank(query, incidentCandidates, 3);
-  const topScore = Math.max(
-    rankedKnowledge[0]?.score ?? 0,
-    rankedIncidents[0]?.score ?? 0,
-    0.0001,
-  );
+  const evidenceConfidence = calibratedEvidenceConfidence(query, [
+    ...rankedKnowledge,
+    ...rankedIncidents,
+  ]);
+  const topScore = Math.max(rankedKnowledge[0]?.score ?? 0, rankedIncidents[0]?.score ?? 0, 0.0001);
 
   const evidence: EvidenceItem[] = [
     ...rankedKnowledge.map((r) => {
@@ -160,7 +236,7 @@ export async function runTriagePipeline(
     organization_id: org,
     incident_id: incidentId,
     query: query.slice(0, 500),
-    strategy: "lexical_tfidf_hybrid",
+    strategy: "tenant_prefiltered_lexical_tfidf_v2",
     result_count: evidence.length,
     top_score: evidence[0]?.score ?? 0,
   });
@@ -186,16 +262,10 @@ Bildirilen severity: ${incident.reported_severity ?? "belirtilmemiş"}
 KANITLAR
 ${evidenceBlock}`;
 
-  const ai = await callGateway(SYSTEM_PROMPT, userPrompt);
-  const parsed = parseJsonBlock<{
-    category: string;
-    suggested_severity: "P1" | "P2" | "P3" | "P4";
-    missing_information: string[];
-    evidence_confidence: number;
-    summary: string;
-    hypotheses: Array<{ hypothesis: string; rationale: string; confidence: number }>;
-    actions: Array<{ title: string; detail: string; risk_level: string; confidence: number }>;
-  }>(ai.content);
+  const ai = await callGateway(TRIAGE_SYSTEM_PROMPT, userPrompt, effectiveFailureMode);
+  const parsedJson = parseJsonBlock<unknown>(ai.content);
+  const parsedResult = TriageResponseSchema.safeParse(parsedJson);
+  const parsed = parsedResult.success ? parsedResult.data : null;
 
   const mode: "live" | "fallback" = parsed ? "live" : "fallback";
   const triage = parsed
@@ -203,35 +273,40 @@ ${evidenceBlock}`;
         category: parsed.category,
         suggestedSeverity: parsed.suggested_severity,
         missingInformation: parsed.missing_information ?? [],
-        evidenceConfidence: Math.max(0, Math.min(1, Number(parsed.evidence_confidence) || 0)),
+        evidenceConfidence: Math.min(parsed.evidence_confidence, evidenceConfidence),
         summary: parsed.summary,
       }
-    : deterministicTriage(query, evidence.length);
+    : deterministicTriage(query, evidenceConfidence);
+
+  const hasEnoughEvidence = shouldGenerateActions(triage.evidenceConfidence);
 
   const hypotheses = parsed?.hypotheses?.length
     ? parsed.hypotheses.slice(0, 3)
-    : evidence.length
+    : hasEnoughEvidence && evidence.length
       ? [
           {
             hypothesis: `${evidence[0]!.title} kaydındaki desenle uyumlu bir kök neden`,
             rationale: "Deterministik mod: en yüksek skorlu tenant kanıtı ile eşleşme.",
-            confidence: 0.4,
+            confidence: Math.min(0.78, triage.evidenceConfidence),
           },
         ]
       : [];
 
   const actions = parsed?.actions?.length
     ? parsed.actions.slice(0, 4)
-    : evidence.length
+    : hasEnoughEvidence && evidence.length
       ? [
           {
             title: "İlgili runbook adımlarını uygula",
             detail: `${evidence[0]!.title} kaydındaki teşhis adımlarını uygulayın ve sonucu kaydedin.`,
             risk_level: "medium",
-            confidence: 0.35,
+            confidence: Math.min(0.74, triage.evidenceConfidence),
           },
         ]
       : [];
+
+  const groundedHypotheses = hasEnoughEvidence ? hypotheses : [];
+  const groundedActions = hasEnoughEvidence ? actions : [];
 
   const { data: run } = await supabase
     .from("ai_runs")
@@ -244,7 +319,7 @@ ${evidenceBlock}`;
       status: mode === "live" ? "succeeded" : "degraded",
       latency_ms: ai.latencyMs,
       error_message: ai.error ?? null,
-      prompt_summary: `triage v1 · ${evidence.length} kanıt`,
+      prompt_summary: `triage v2.0 · ${evidence.length} kanıt · güven ${triage.evidenceConfidence}`,
       created_by: userId,
     })
     .select("id")
@@ -264,9 +339,9 @@ ${evidenceBlock}`;
     summary: triage.summary,
   });
 
-  if (hypotheses.length) {
+  if (groundedHypotheses.length) {
     await supabase.from("root_cause_hypotheses").insert(
-      hypotheses.map((h) => ({
+      groundedHypotheses.map((h) => ({
         organization_id: org,
         incident_id: incidentId,
         ai_run_id: runId,
@@ -278,9 +353,9 @@ ${evidenceBlock}`;
     );
   }
 
-  if (actions.length) {
+  if (groundedActions.length) {
     await supabase.from("recommended_actions").insert(
-      actions.map((a) => ({
+      groundedActions.map((a) => ({
         organization_id: org,
         incident_id: incidentId,
         ai_run_id: runId,
@@ -327,7 +402,10 @@ ${evidenceBlock}`;
   });
 
   if (incident.reported_severity) {
-    await supabase.from("incidents").update({ ai_suggested_severity: triage.suggestedSeverity }).eq("id", incidentId);
+    await supabase
+      .from("incidents")
+      .update({ ai_suggested_severity: triage.suggestedSeverity })
+      .eq("id", incidentId);
   }
 
   return {
@@ -335,8 +413,8 @@ ${evidenceBlock}`;
     model: ai.model,
     warning: ai.error,
     triage,
-    hypotheses,
-    actions: actions.map((a) => ({
+    hypotheses: groundedHypotheses,
+    actions: groundedActions.map((a) => ({
       title: a.title,
       detail: a.detail,
       riskLevel: a.risk_level ?? "medium",

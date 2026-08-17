@@ -9,7 +9,17 @@ export default defineTool({
     "List incidents in the signed-in user's tenant, newest first. Optionally filter by status or severity.",
   inputSchema: {
     status: z
-      .enum(["new","triage_pending","triaged","investigating","mitigated","resolved","knowledge_review","closed","reopened"])
+      .enum([
+        "new",
+        "triage_pending",
+        "triaged",
+        "investigating",
+        "mitigated",
+        "resolved",
+        "knowledge_review",
+        "closed",
+        "reopened",
+      ])
       .optional()
       .describe("Filter by incident status."),
     severity: z.enum(["P1", "P2", "P3", "P4"]).optional().describe("Filter by approved severity."),

@@ -11,9 +11,15 @@ export const Route = createFileRoute("/_app/triage")({
   head: () => ({
     meta: [
       { title: "Triage Kuyruğu — ResolveIQ" },
-      { name: "description", content: "AI triage bekleyen ve insan onayı gereken finansal incident kayıtları." },
+      {
+        name: "description",
+        content: "AI triage bekleyen ve insan onayı gereken finansal incident kayıtları.",
+      },
       { property: "og:title", content: "Triage Kuyruğu — ResolveIQ" },
-      { property: "og:description", content: "AI triage bekleyen ve insan onayı gereken kayıtlar." },
+      {
+        property: "og:description",
+        content: "AI triage bekleyen ve insan onayı gereken kayıtlar.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -33,7 +39,9 @@ function TriageQueue() {
       const [incidents, results] = await Promise.all([
         supabase
           .from("incidents")
-          .select("id, reference, title, status, reported_severity, ai_suggested_severity, approved_severity, detected_at")
+          .select(
+            "id, reference, title, status, reported_severity, ai_suggested_severity, approved_severity, detected_at",
+          )
           .eq("organization_id", org!)
           .in("status", ["new", "triage_pending", "triaged"])
           .order("detected_at", { ascending: true }),
@@ -46,8 +54,7 @@ function TriageQueue() {
     },
   });
 
-  const resultFor = (incidentId: string) =>
-    data?.results.find((r) => r.incident_id === incidentId);
+  const resultFor = (incidentId: string) => data?.results.find((r) => r.incident_id === incidentId);
 
   return (
     <>
@@ -63,7 +70,10 @@ function TriageQueue() {
             data!.incidents.map((i) => {
               const result = resultFor(i.id);
               return (
-                <div key={i.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                <div
+                  key={i.id}
+                  className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
+                >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{i.title}</p>
                     <p className="truncate text-xs text-muted-foreground">
@@ -74,7 +84,11 @@ function TriageQueue() {
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <SeverityBadge severity={i.approved_severity ?? i.ai_suggested_severity ?? i.reported_severity} />
+                    <SeverityBadge
+                      severity={
+                        i.approved_severity ?? i.ai_suggested_severity ?? i.reported_severity
+                      }
+                    />
                     <StatusBadge status={i.status} />
                     <Button asChild size="sm" variant="outline">
                       <Link to="/olaylar/$id" params={{ id: i.id }}>

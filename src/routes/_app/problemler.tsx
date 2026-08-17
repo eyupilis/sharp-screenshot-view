@@ -9,9 +9,15 @@ export const Route = createFileRoute("/_app/problemler")({
   head: () => ({
     meta: [
       { title: "Tekrarlayan Desenler — ResolveIQ" },
-      { name: "description", content: "Birden çok incident'ta tekrar eden kök neden desenleri ve kalıcı çözüm adayları." },
+      {
+        name: "description",
+        content: "Birden çok incident'ta tekrar eden kök neden desenleri ve kalıcı çözüm adayları.",
+      },
       { property: "og:title", content: "Tekrarlayan Desenler — ResolveIQ" },
-      { property: "og:description", content: "Tekrar eden kök neden desenleri ve kalıcı çözüm adayları." },
+      {
+        property: "og:description",
+        content: "Tekrar eden kök neden desenleri ve kalıcı çözüm adayları.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

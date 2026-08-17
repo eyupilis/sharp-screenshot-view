@@ -26,7 +26,11 @@ export default defineTool({
       .eq(isUuid ? "id" : "reference", incident)
       .maybeSingle();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    if (!data) return { content: [{ type: "text", text: `Incident not found: ${incident}` }], isError: true };
+    if (!data)
+      return {
+        content: [{ type: "text", text: `Incident not found: ${incident}` }],
+        isError: true,
+      };
 
     const [{ data: hypotheses }, { data: actions }] = await Promise.all([
       supabase
@@ -37,7 +41,11 @@ export default defineTool({
       supabase.from("recommended_actions").select("*").eq("incident_id", data.id),
     ]);
 
-    const payload = { incident: data, hypotheses: hypotheses ?? [], recommended_actions: actions ?? [] };
+    const payload = {
+      incident: data,
+      hypotheses: hypotheses ?? [],
+      recommended_actions: actions ?? [],
+    };
     return {
       content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
       structuredContent: payload,
