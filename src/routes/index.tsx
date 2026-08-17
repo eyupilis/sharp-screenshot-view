@@ -6,7 +6,6 @@ import {
   BookOpen,
   Gauge,
   Lock,
-  ShieldCheck,
   Sparkles,
   Workflow,
 } from "lucide-react";
